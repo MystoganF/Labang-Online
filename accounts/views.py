@@ -1,7 +1,10 @@
+# views.py
 """
 Views for Labang Online application
 Handles authentication, user management, and password recovery
 """
+
+
 
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib import messages
@@ -24,14 +27,19 @@ from django.db.models import Q, Count
 from django.http import JsonResponse
 from django.contrib.auth.decorators import user_passes_test
 
+import google.generativeai as genai
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+import json
+import os
 
 
-# -------------------- HELPER FUNCTION --------------------
-# REMOVED: get_base64_image function - no longer needed with URL fields
 
 
 # -------------------- LOGIN --------------------
-unread_count = Announcement.objects.filter(is_active=True).count()
+# unread_count = Announcement.objects.filter(is_active=True).count()
+# unread_count = 1
 
 @never_cache
 def login(request):
@@ -428,6 +436,7 @@ def complete_profile(request):
 @never_cache
 def document_request(request):
     user = request.user
+    unread_count = Announcement.objects.filter(is_active=True).count()
     
     context = {
         'user': user,
@@ -440,6 +449,7 @@ def document_request(request):
 @never_cache
 def certificate_requests(request):
     user = request.user
+    unread_count = Announcement.objects.filter(is_active=True).count()
 
     # Get filter parameters - use .get() with empty string default
     certificate_type = request.GET.get('certificate_type', '').strip()
@@ -494,6 +504,7 @@ def certificate_requests(request):
 @never_cache
 def request_detail(request, request_id):
     user = request.user
+    unread_count = Announcement.objects.filter(is_active=True).count()
 
     cert_request = get_object_or_404(CertificateRequest, request_id=request_id, user=user)
     
@@ -529,6 +540,7 @@ def request_detail(request, request_id):
 @never_cache
 def barangay_clearance_request(request):
     user = request.user
+    unread_count = Announcement.objects.filter(is_active=True).count()
     
     if request.method == 'POST':
         purpose = request.POST.get('purpose')
@@ -565,6 +577,7 @@ def barangay_clearance_request(request):
 @never_cache
 def brgy_residency_cert(request):
     user = request.user
+    unread_count = Announcement.objects.filter(is_active=True).count()
     
     if request.method == 'POST':
         purpose = request.POST.get('purpose')
@@ -601,6 +614,7 @@ def brgy_residency_cert(request):
 @never_cache
 def brgy_indigency_cert(request):
     user = request.user
+    unread_count = Announcement.objects.filter(is_active=True).count()
     
     if request.method == 'POST':
         purpose = request.POST.get('purpose')
@@ -661,6 +675,7 @@ def brgy_indigency_cert(request):
 @never_cache
 def brgy_goodmoral_character(request):
     user = request.user
+    unread_count = Announcement.objects.filter(is_active=True).count()
     
     if request.method == 'POST':
         purpose = request.POST.get('purpose')
@@ -697,6 +712,7 @@ def brgy_goodmoral_character(request):
 @never_cache
 def brgy_business_cert(request):
     user = request.user
+    unread_count = Announcement.objects.filter(is_active=True).count()
     
     if request.method == 'POST':
         purpose = request.POST.get('purpose')
@@ -761,6 +777,7 @@ def brgy_business_cert(request):
 @never_cache
 def payment_mode_selection(request, request_id):
     user = request.user
+    unread_count = Announcement.objects.filter(is_active=True).count()
     
     # Get the certificate request
     cert_request = get_object_or_404(CertificateRequest, request_id=request_id, user=user)
@@ -804,6 +821,7 @@ def payment_mode_selection(request, request_id):
 @never_cache
 def gcash_payment(request, request_id):
     user = request.user
+    unread_count = Announcement.objects.filter(is_active=True).count()
     
     # Get the certificate request
     cert_request = get_object_or_404(CertificateRequest, request_id=request_id, user=user)
@@ -863,6 +881,7 @@ def gcash_payment(request, request_id):
 @never_cache
 def counter_payment(request, request_id):
     user = request.user
+    unread_count = Announcement.objects.filter(is_active=True).count()
 
     cert_request = get_object_or_404(CertificateRequest, request_id=request_id, user=user)
 
@@ -1039,584 +1058,132 @@ def file_report(request):
     return render(request, 'accounts/file_report.html', context)
 
 
-# Helper function to check if user is admin
-def is_admin(user):
-    return user.is_staff or user.is_superuser
-
-
-# -------------------- ADMIN DASHBOARD --------------------
-
-
-@login_required(login_url='accounts:login')
-@user_passes_test(is_admin, login_url='accounts:personal_info')
-@never_cache
-def admin_dashboard(request):
-    """
-    Main admin dashboard with summary statistics and recent activities
-    Implements US-33 (Admin Dashboard UI) and US-34 (Admin Dashboard Functionality)
-    """
-    # Announcement Statistics
-    total_announcements = Announcement.objects.count()
-    active_announcements = Announcement.objects.filter(is_active=True).count()
-    recent_announcements = Announcement.objects.select_related('posted_by').order_by('-created_at')[:5]
-        # Summary Statistics 
-    total_users = User.objects.filter(is_staff=False).count()
-    verified_users = User.objects.filter(resident_confirmation=True, is_staff=False).count()
-    pending_verification = User.objects.filter(resident_confirmation=False, is_staff=False).count()
-    
-    # Certificate Statistics
-    total_certificates = CertificateRequest.objects.count()
-    pending_payments = CertificateRequest.objects.filter(payment_status='pending').count()
-    paid_certificates = CertificateRequest.objects.filter(payment_status='paid').count()
-    unpaid_certificates = CertificateRequest.objects.filter(payment_status='unpaid').count()
-    
-    # Report Statistics
-    total_reports = IncidentReport.objects.count()
-    pending_reports = IncidentReport.objects.filter(status='Pending').count()
-    under_investigation = IncidentReport.objects.filter(status='Under Investigation').count()
-    resolved_reports = IncidentReport.objects.filter(status='Resolved').count()
-    
-    # Recent Activities (last 10 items)
-    recent_certificates = CertificateRequest.objects.select_related('user').order_by('-created_at')[:5]
-    recent_reports = IncidentReport.objects.select_related('user').order_by('-created_at')[:5]
-    recent_users = User.objects.filter(is_staff=False).order_by('-date_joined')[:5]
-    
-    context = {
-        'user': request.user,
-        # User statistics
-        'total_users': total_users,
-        'verified_users': verified_users,
-        'pending_verification': pending_verification,
-        # Certificate statistics
-        'total_certificates': total_certificates,
-        'pending_payments': pending_payments,
-        'paid_certificates': paid_certificates,
-        'unpaid_certificates': unpaid_certificates,
-        # Report statistics
-        'total_reports': total_reports,
-        'pending_reports': pending_reports,
-        'under_investigation': under_investigation,
-        'resolved_reports': resolved_reports,
-        # Recent activities
-        'recent_certificates': recent_certificates,
-        'recent_reports': recent_reports,
-        'recent_users': recent_users,
-        'total_announcements': total_announcements,
-        'active_announcements': active_announcements,
-        'recent_announcements': recent_announcements,
-    }
-    
-    return render(request, 'admin/dashboard.html', context)
-
-
-# -------------------- USER MANAGEMENT --------------------
-@login_required(login_url='accounts:login')
-@user_passes_test(is_admin, login_url='accounts:personal_info')
-@never_cache
-def admin_users(request):
-    """
-    User management page for admins
-    Implements US-34 Acceptance Criteria 37: User Management
-    """
-    
-    # Get filter parameters
-    query = request.GET.get('q', '').strip()
-    verification_status = request.GET.get('verification_status', '').strip()
-    
-    # Base queryset - exclude staff users
-    users = User.objects.filter(is_staff=False).order_by('-date_joined')
-    
-    # Apply search filter
-    if query:
-        users = users.filter(
-            Q(username__icontains=query) |
-            Q(email__icontains=query) |
-            Q(full_name__icontains=query) |
-            Q(contact_number__icontains=query)
-        )
-    
-    # Apply verification filter
-    if verification_status == 'verified':
-        users = users.filter(resident_confirmation=True)
-    elif verification_status == 'pending':
-        users = users.filter(resident_confirmation=False)
-    
-    context = {
-        'user': request.user,
-        'users': users,
-        'total_users': users.count(),
-    }
-    
-    return render(request, 'admin/users.html', context)
-
-
-@login_required(login_url='accounts:login')
-@user_passes_test(is_admin, login_url='accounts:personal_info')
-@never_cache
-def admin_verify_user(request, user_id):
-    """
-    Verify a user's account
-    """
-    if request.method == 'POST':
-        target_user = get_object_or_404(User, id=user_id, is_staff=False)
-        target_user.resident_confirmation = True
-        target_user.save()
-        
-        messages.success(request, f"User {target_user.username} has been verified successfully.")
-        return redirect('accounts:admin_users')
-    
-    return redirect('accounts:admin_users')
-
-
-@login_required(login_url='accounts:login')
-@user_passes_test(is_admin, login_url='accounts:personal_info')
-@never_cache
-def admin_deactivate_user(request, user_id):
-    """
-    Deactivate a user's account
-    """
-    if request.method == 'POST':
-        target_user = get_object_or_404(User, id=user_id, is_staff=False)
-        target_user.is_active = False
-        target_user.save()
-        
-        messages.success(request, f"User {target_user.username} has been deactivated.")
-        return redirect('accounts:admin_users')
-    
-    return redirect('accounts:admin_users')
-
-
-@login_required(login_url='accounts:login')
-@user_passes_test(is_admin, login_url='accounts:personal_info')
-@never_cache
-def admin_activate_user(request, user_id):
-    """
-    Activate a user's account
-    """
-    if request.method == 'POST':
-        target_user = get_object_or_404(User, id=user_id, is_staff=False)
-        target_user.is_active = True
-        target_user.save()
-        
-        messages.success(request, f"User {target_user.username} has been activated.")
-        return redirect('accounts:admin_users')
-    
-    return redirect('accounts:admin_users')
-
-
-# -------------------- CERTIFICATE MANAGEMENT --------------------
-@login_required(login_url='accounts:login')
-@user_passes_test(is_admin, login_url='accounts:personal_info')
-@never_cache
-def admin_certificates(request):
-    """
-    Certificate request management page for admins
-    Implements US-34 Acceptance Criteria 39: Certificate Request Control
-    """
-    
-    # Get filter parameters
-    query = request.GET.get('q', '').strip()
-    certificate_type = request.GET.get('certificate_type', '').strip()
-    payment_status = request.GET.get('payment_status', '').strip()
-    claim_status = request.GET.get('claim_status', '').strip()
-    
-    # Base queryset
-    certificates = CertificateRequest.objects.select_related('user').order_by('-created_at')
-    
-    # Apply search filter
-    if query:
-        certificates = certificates.filter(
-            Q(request_id__icontains=query) |
-            Q(user__username__icontains=query) |
-            Q(user__full_name__icontains=query) |
-            Q(purpose__icontains=query)
-        )
-    
-    # Apply filters
-    if certificate_type:
-        certificates = certificates.filter(certificate_type=certificate_type)
-    
-    if payment_status:
-        certificates = certificates.filter(payment_status=payment_status)
-    
-    if claim_status:
-        certificates = certificates.filter(claim_status=claim_status)
-    
-    context = {
-        'user': request.user,
-        'certificates': certificates,
-        'total_certificates': certificates.count(),
-    }
-    
-    return render(request, 'admin/certificates.html', context)
-
-
-@login_required(login_url='accounts:login')
-@user_passes_test(is_admin, login_url='accounts:personal_info')
-@never_cache
-def admin_certificate_detail(request, request_id):
-    """
-    View and manage individual certificate request
-    """
-    certificate = get_object_or_404(CertificateRequest, request_id=request_id)
-    
-    context = {
-        'user': request.user,
-        'certificate': certificate,
-    }
-    
-    return render(request, 'admin/certificate_detail.html', context)
-
-
-@login_required(login_url='accounts:login')
-@user_passes_test(is_admin, login_url='accounts:personal_info')
-@never_cache
-def admin_verify_payment(request, request_id):
-    """
-    Verify payment for a certificate request
-    """
-    if request.method == 'POST':
-        certificate = get_object_or_404(CertificateRequest, request_id=request_id)
-        
-        if certificate.payment_status == 'pending':
-            certificate.payment_status = 'paid'
-            certificate.paid_at = timezone.now()
-            certificate.save()
-            
-            messages.success(request, f"Payment verified for request {request_id}.")
-        else:
-            messages.error(request, "Only pending payments can be verified.")
-        
-        return redirect('accounts:admin_certificates')
-    
-    return redirect('accounts:admin_certificates')
-
-
-@login_required(login_url='accounts:login')
-@user_passes_test(is_admin, login_url='accounts:personal_info')
-@never_cache
-def admin_reject_payment(request, request_id):
-    """
-    Reject payment verification for a certificate request
-    """
-    if request.method == 'POST':
-        certificate = get_object_or_404(CertificateRequest, request_id=request_id)
-        
-        if certificate.payment_status == 'pending':
-            certificate.payment_status = 'failed'
-            certificate.save()
-            
-            messages.success(request, f"Payment rejected for request {request_id}.")
-        else:
-            messages.error(request, "Only pending payments can be rejected.")
-        
-        return redirect('accounts:admin_certificates')
-    
-    return redirect('accounts:admin_certificates')
-
-
-@login_required(login_url='accounts:login')
-@user_passes_test(is_admin, login_url='accounts:personal_info')
-@never_cache
-def admin_update_claim_status(request, request_id):
-    """
-    Update claim status for a certificate request
-    """
-    if request.method == 'POST':
-        certificate = get_object_or_404(CertificateRequest, request_id=request_id)
-        new_status = request.POST.get('claim_status')
-        
-        if new_status in ['processing', 'ready', 'claimed']:
-            certificate.claim_status = new_status
-            
-            if new_status == 'claimed':
-                certificate.claimed_at = timezone.now()
-            
-            certificate.save()
-            messages.success(request, f"Claim status updated to '{certificate.get_claim_status_display()}' for request {request_id}.")
-        else:
-            messages.error(request, "Invalid claim status.")
-        
-        return redirect('accounts:admin_certificates')
-    
-    return redirect('accounts:admin_certificates')
-
-
-# -------------------- REPORT MANAGEMENT --------------------
-@login_required(login_url='accounts:login')
-@user_passes_test(is_admin, login_url='accounts:personal_info')
-@never_cache
-def admin_reports(request):
-    """
-    Incident report management page for admins
-    Implements US-34 Acceptance Criteria 38: Report Monitoring
-    """
-    
-    # Get filter parameters
-    query = request.GET.get('q', '').strip()
-    incident_type = request.GET.get('incident_type', '').strip()
-    status = request.GET.get('status', '').strip()
-    
-    # Base queryset
-    reports = IncidentReport.objects.select_related('user').order_by('-created_at')
-    
-    # Apply search filter
-    if query:
-        reports = reports.filter(
-            Q(report_id__icontains=query) |
-            Q(user__username__icontains=query) |
-            Q(user__full_name__icontains=query) |
-            Q(place__icontains=query) |
-            Q(message__icontains=query)
-        )
-    
-    # Apply filters
-    if incident_type:
-        reports = reports.filter(incident_type=incident_type)
-    
-    if status:
-        reports = reports.filter(status=status)
-    
-    context = {
-        'user': request.user,
-        'reports': reports,
-        'total_reports': reports.count(),
-    }
-    
-    return render(request, 'admin/reports.html', context)
-
-
-@login_required(login_url='accounts:login')
-@user_passes_test(is_admin, login_url='accounts:personal_info')
-@never_cache
-def admin_report_detail(request, report_id):
-    """
-    View and manage individual incident report
-    """
-    report = get_object_or_404(IncidentReport, report_id=report_id)
-    
-    context = {
-        'user': request.user,
-        'report': report,
-    }
-    
-    return render(request, 'admin/report_detail.html', context)
-
-
-@login_required(login_url='accounts:login')
-@user_passes_test(is_admin, login_url='accounts:personal_info')
-@never_cache
-def admin_update_report_status(request, report_id):
-    """
-    Update status for an incident report
-    """
-    if request.method == 'POST':
-        report = get_object_or_404(IncidentReport, report_id=report_id)
-        new_status = request.POST.get('status')
-        
-        valid_statuses = ['Pending', 'Under Investigation', 'Mediation Scheduled', 'Resolved']
-        
-        if new_status in valid_statuses:
-            report.status = new_status
-            report.save()
-            messages.success(request, f"Report status updated to '{new_status}' for {report_id}.")
-        else:
-            messages.error(request, "Invalid status.")
-        
-        return redirect('accounts:admin_reports')
-    
-    return redirect('accounts:admin_reports')
-
-
-@login_required(login_url='accounts:login')
-@user_passes_test(is_admin, login_url='accounts:personal_info')
-@never_cache
-def admin_delete_report(request, report_id):
-    """
-    Delete an incident report
-    """
-    if request.method == 'POST':
-        report = get_object_or_404(IncidentReport, report_id=report_id)
-        report_id_display = report.report_id
-        report.delete()
-        
-        messages.success(request, f"Report {report_id_display} has been deleted.")
-        return redirect('accounts:admin_reports')
-    
-    return redirect('accounts:admin_reports')
-
+# -------------------- ANNOUNCEMENTS --------------------
 @login_required(login_url='accounts:login')
 @never_cache
 def announcements(request):
-    """
-    User view for announcements
-    Implements US-35: User Announcement Viewing
-    """
+    """Display active announcements for users"""
     user = request.user
     
-    # Get only active announcements
-    announcements_list = Announcement.objects.filter(is_active=True).select_related('posted_by')
+    # Get all active announcements
+    active_announcements = Announcement.objects.filter(is_active=True).order_by('-created_at')
     
-    # Get filter parameters
-    announcement_type = request.GET.get('type', '').strip()
-    
-    # Apply type filter if provided
-    if announcement_type and announcement_type in ['general', 'event', 'alert', 'maintenance']:
-        announcements_list = announcements_list.filter(announcement_type=announcement_type)
-    
+    # Get unread announcement count
+    unread_count = Announcement.objects.filter(is_active=True).count()
     
     context = {
         'user': user,
-        'announcements': announcements_list,
+        'announcements': active_announcements,
         'unread_count': unread_count,
     }
-    
     return render(request, 'accounts/announcements.html', context)
 
 
-# ============================================
-# ADMIN VIEWS FOR ANNOUNCEMENTS
-# ============================================
-
-@login_required(login_url='accounts:login')
-@user_passes_test(is_admin, login_url='accounts:personal_info')
-@never_cache
-def admin_announcements(request):
-    """
-    Admin view for managing announcements
-    Implements US-34 AC-40: Announcement Management
-    """
+@login_required
+def chatbot_api(request):
+    """Handle chatbot API requests for LabangOnline"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST method required'}, status=405)
     
-    # Get filter parameters
-    query = request.GET.get('q', '').strip()
-    announcement_type = request.GET.get('type', '').strip()
-    status = request.GET.get('status', '').strip()
-    
-    # Base queryset
-    announcements_list = Announcement.objects.select_related('posted_by').order_by('-created_at')
-    
-    # Apply search filter
-    if query:
-        announcements_list = announcements_list.filter(
-            Q(title__icontains=query) |
-            Q(content__icontains=query)
-        )
-    
-    # Apply type filter
-    if announcement_type:
-        announcements_list = announcements_list.filter(announcement_type=announcement_type)
-    
-    # Apply status filter
-    if status == 'active':
-        announcements_list = announcements_list.filter(is_active=True)
-    elif status == 'inactive':
-        announcements_list = announcements_list.filter(is_active=False)
-    
-    context = {
-        'user': request.user,
-        'announcements': announcements_list,
-        'total_announcements': announcements_list.count(),
-        'unread_count': unread_count,
-    }
-    
-    return render(request, 'admin/announcements.html', context)
-
-
-@login_required(login_url='accounts:login')
-@user_passes_test(is_admin, login_url='accounts:personal_info')
-@never_cache
-def admin_create_announcement(request):
-    """Create new announcement"""
-    if request.method == 'POST':
-        title = request.POST.get('title')
-        content = request.POST.get('content')
-        announcement_type = request.POST.get('announcement_type')
-        is_active = request.POST.get('is_active') == 'on'
+    try:
+        data = json.loads(request.body)
+        user_message = data.get('message', '').strip()
         
-        # Validation
-        if not title or not content:
-            messages.error(request, "Title and content are required.")
-            return redirect('accounts:admin_announcements')
+        if not user_message:
+            return JsonResponse({'error': 'Message is required'}, status=400)
         
-        if announcement_type not in ['general', 'event', 'alert', 'maintenance']:
-            messages.error(request, "Invalid announcement type.")
-            return redirect('accounts:admin_announcements')
+        # Check if API key is configured
+        gemini_api_key = os.environ.get('GEMINI_API_KEY', '')
+        if not gemini_api_key:
+            return JsonResponse({
+                'error': 'AI service not configured.',
+                'success': False
+            }, status=500)
         
-        # Create announcement
-        Announcement.objects.create(
-            title=title,
-            content=content,
-            announcement_type=announcement_type,
-            is_active=is_active,
-            posted_by=request.user
-        )
+        # Configure Gemini
+        genai.configure(api_key=gemini_api_key)
         
-        messages.success(request, "Announcement created successfully!")
-        return redirect('accounts:admin_announcements')
+        generation_config = {
+            "temperature": 0.7,
+            "top_p": 1,
+            "top_k": 1,
+            "max_output_tokens": 2048,
+        }
+        
+        # System context for LabangOnline
+        context = f"""You are a helpful AI assistant for LabangOnline, the official online portal for Barangay Labangon in Cebu City, Philippines.
+
+LabangOnline offers:
+- Document Request Services (Barangay Clearance, Certificate of Residency, Certificate of Indigency, Good Moral Character Certificate, Business Clearance)
+- Incident Report Filing
+- Announcements and Updates
+- Resident Verification Services
+
+Current user information:
+- Name: {request.user.full_name}
+- Username: {request.user.username}
+- Resident Status: {"Verified" if request.user.resident_confirmation else "Pending Verification"}
+- Address: {request.user.address_line}, {request.user.barangay}, {request.user.city}
+
+Answer questions about:
+- How to request documents
+- Document processing fees and requirements
+- How to file incident reports
+- Account and profile management
+- Barangay services and procedures
+
+Be helpful, professional, and friendly. Keep responses concise and actionable. When discussing fees or official procedures, be accurate based on the platform's actual offerings."""
+        
+        full_prompt = f"{context}\n\nUser: {user_message}\n\nAssistant:"
+        
+        # Try different models
+        model_attempts = [
+            'gemini-2.5-flash',
+            'gemini-2.0-flash',
+            'gemini-flash-latest',
+            'gemini-2.5-pro',
+            'gemini-pro-latest',
+        ]
+        
+        response_text = None
+        for model_name in model_attempts:
+            try:
+                model = genai.GenerativeModel(model_name)
+                response = model.generate_content(
+                    full_prompt,
+                    generation_config=generation_config
+                )
+                response_text = response.text
+                print(f"✓ SUCCESS with model: {model_name}")
+                break
+            except Exception as e:
+                error_msg = str(e)[:150]
+                print(f"✗ Model '{model_name}' failed: {error_msg}")
+                continue
+        
+        if not response_text:
+            return JsonResponse({
+                'error': 'Could not generate response. Please try again.',
+                'success': False
+            }, status=500)
+        
+        return JsonResponse({
+            'response': response_text,
+            'success': True
+        })
+        
+    except json.JSONDecodeError as e:
+        print(f"JSON decode error: {e}")
+        return JsonResponse({
+            'error': 'Invalid request format',
+            'success': False
+        }, status=400)
     
-    return redirect('accounts:admin_announcements')
-
-
-@login_required(login_url='accounts:login')
-@user_passes_test(is_admin, login_url='accounts:personal_info')
-@never_cache
-def admin_edit_announcement(request, announcement_id):
-    """Edit existing announcement"""
-    announcement = get_object_or_404(Announcement, id=announcement_id)
-    
-    if request.method == 'POST':
-        title = request.POST.get('title')
-        content = request.POST.get('content')
-        announcement_type = request.POST.get('announcement_type')
-        is_active = request.POST.get('is_active') == 'on'
-        
-        # Validation
-        if not title or not content:
-            messages.error(request, "Title and content are required.")
-            return redirect('accounts:admin_announcements')
-        
-        # Update announcement
-        announcement.title = title
-        announcement.content = content
-        announcement.announcement_type = announcement_type
-        announcement.is_active = is_active
-        announcement.save()
-        
-        messages.success(request, "Announcement updated successfully!")
-        return redirect('accounts:admin_announcements')
-    
-    return redirect('accounts:admin_announcements')
-
-
-@login_required(login_url='accounts:login')
-@user_passes_test(is_admin, login_url='accounts:personal_info')
-@never_cache
-def admin_delete_announcement(request, announcement_id):
-    """Delete announcement"""
-    if request.method == 'POST':
-        announcement = get_object_or_404(Announcement, id=announcement_id)
-        announcement.delete()
-        
-        messages.success(request, "Announcement deleted successfully!")
-        return redirect('accounts:admin_announcements')
-    
-    return redirect('accounts:admin_announcements')
-
-
-@login_required(login_url='accounts:login')
-@user_passes_test(is_admin, login_url='accounts:personal_info')
-@never_cache
-def admin_toggle_announcement(request, announcement_id):
-    """Toggle announcement active status"""
-    if request.method == 'POST':
-        announcement = get_object_or_404(Announcement, id=announcement_id)
-        announcement.is_active = not announcement.is_active
-        announcement.save()
-        
-        status = "activated" if announcement.is_active else "deactivated"
-        messages.success(request, f"Announcement {status} successfully!")
-        return redirect('accounts:admin_announcements')
-    
-    return redirect('accounts:admin_announcements')
-
-
+    except Exception as e:
+        print(f"Chatbot API error: {type(e).__name__}: {e}")
+        import traceback
+        print(f"Full traceback:\n{traceback.format_exc()}")
+        return JsonResponse({
+            'error': f'An error occurred: {str(e)}',
+            'success': False
+        }, status=500)

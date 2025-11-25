@@ -451,19 +451,12 @@
               >EDIT INFORMATION</a
             >
 
-            <!-- Admin Dashboard Button - Only visible for staff/superusers -->
-            {% if user.is_staff or user.is_superuser %}
-            <a
-              href="{% url 'accounts:admin_dashboard' %}"
-              class="action-btn admin-btn"
-            >
-              ADMIN DASHBOARD
-            </a>
-            {% endif %}
+           
           </div>
         </div>
       </main>
     </div>
     <script src="{% static 'js/dashboard.js' %}"></script>
+    {% include 'accounts/chatbot.html' %}
   </body>
 </html>

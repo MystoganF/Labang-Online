@@ -27,6 +27,7 @@ pip install python-dotenv
 pip install psycopg2-binary
 pip install psycopg
 pip install whitenoise
+pip install google-generativeai
 ```
 
 4) Initialize database and run server

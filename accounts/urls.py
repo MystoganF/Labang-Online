@@ -1,3 +1,4 @@
+#urls.py
 from django.urls import path
 from . import views
 
@@ -36,37 +37,11 @@ urlpatterns = [
     # Request Management
     path('certificate_requests/cancel_request/<str:request_id>/', views.cancel_request, name='cancel_request'),
 
-    path('admin/dashboard/', views.admin_dashboard, name='admin_dashboard'),
-
-# User Management URLs
-path('admin/users/', views.admin_users, name='admin_users'),
-path('admin/users/<int:user_id>/verify/', views.admin_verify_user, name='admin_verify_user'),
-path('admin/users/<int:user_id>/deactivate/', views.admin_deactivate_user, name='admin_deactivate_user'),
-path('admin/users/<int:user_id>/activate/', views.admin_activate_user, name='admin_activate_user'),
-
-# Certificate Management URLs
-path('admin/certificates/', views.admin_certificates, name='admin_certificates'),
-path('admin/certificates/<str:request_id>/', views.admin_certificate_detail, name='admin_certificate_detail'),
-path('admin/certificates/<str:request_id>/verify-payment/', views.admin_verify_payment, name='admin_verify_payment'),
-path('admin/certificates/<str:request_id>/reject-payment/', views.admin_reject_payment, name='admin_reject_payment'),
-path('admin/certificates/<str:request_id>/update-claim/', views.admin_update_claim_status, name='admin_update_claim_status'),
-
-# Report Management URLs
-path('admin/reports/', views.admin_reports, name='admin_reports'),
-path('admin/reports/<str:report_id>/', views.admin_report_detail, name='admin_report_detail'),
-path('admin/reports/<str:report_id>/update-status/', views.admin_update_report_status, name='admin_update_report_status'),
-path('admin/reports/<str:report_id>/delete/', views.admin_delete_report, name='admin_delete_report'),
-
-# User Announcements (Notifications)
+    # User Announcements (Notifications)
     path('announcements/', views.announcements, name='announcements'),
     # Verify code & resend
     path('verify_code/<int:user_id>/resend/', views.resend_code, name='resend_code'),
+    path('api/chatbot/', views.chatbot_api, name='chatbot_api'),
     
-    # Admin Announcement Management
-    path('admin/announcements/', views.admin_announcements, name='admin_announcements'),
-    path('admin/announcements/create/', views.admin_create_announcement, name='admin_create_announcement'),
-    path('admin/announcements/<int:announcement_id>/edit/', views.admin_edit_announcement, name='admin_edit_announcement'),
-    path('admin/announcements/<int:announcement_id>/delete/', views.admin_delete_announcement, name='admin_delete_announcement'),
-    path('admin/announcements/<int:announcement_id>/toggle/', views.admin_toggle_announcement, name='admin_toggle_announcement'),
     
 ]
