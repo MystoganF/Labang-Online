@@ -925,7 +925,7 @@ def counter_payment(request, request_id):
         cert_request.payment_status = 'pending'
         cert_request.payment_reference = f"COUNTER-{cert_request.request_id}"
         cert_request.save(update_fields=['payment_status', 'payment_reference'])
-        messages.success(request, "Your on-site payment has been scheduled. You can switch payment options anytime.")
+        # messages.success(request, "Your on-site payment has been scheduled. You can switch payment options anytime.")
         return redirect('accounts:certificate_requests')
 
     context = {
@@ -958,7 +958,7 @@ def cancel_request(request, request_id):
     cert_request.delete()
     
     # Show success message
-    messages.success(request, f"Certificate request {request_id_display} has been successfully cancelled.")
+    # messages.success(request, f"Certificate request {request_id_display} has been successfully cancelled.")
     
     # Redirect back to certificate requests page
     return redirect('accounts:certificate_requests')
@@ -1007,6 +1007,21 @@ def report_records(request):
         'unread_count': unread_count,
     }
     return render(request, 'accounts/report_records.html', context)
+
+
+@login_required(login_url='accounts:login')
+@never_cache
+def report_detail(request, report_id):
+    user = request.user
+    report = get_object_or_404(IncidentReport, report_id=report_id, user=user)
+    unread_count = Announcement.objects.filter(is_active=True).count()
+    
+    context = {
+        'user': user,
+        'report': report,
+        'unread_count': unread_count,
+    }
+    return render(request, 'accounts/report_detail.html', context)
 
 
 @login_required(login_url='accounts:login')
@@ -1063,11 +1078,11 @@ def file_report(request):
                 status='Pending'
             )
             
-            messages.success(
-                request, 
-                f"Report submitted successfully! Your report ID is {incident.report_id}. "
-                "Our team will review it within 24 hours."
-            )
+            # messages.success(
+            #     request, 
+            #     f"Report submitted successfully! Your report ID is {incident.report_id}. "
+            #     "Our team will review it within 24 hours."
+            # )
             return redirect('accounts:report_records')
             
         except Exception as e:
