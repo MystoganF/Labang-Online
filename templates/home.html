@@ -12,8 +12,10 @@ Barangay Labangon Digital Services{% endblock %} {% block head %}
     {% if user.is_authenticated %}
       <!-- Show Dashboard button for authenticated users -->
       <a href="{% url 'accounts:personal_info' %}" class="btn btn-primary">Go to Dashboard</a>
-      <a href="{% url 'accounts:document_request' %}" class="btn btn-secondary">Request Certificate</a>
-      <a href="{% url 'accounts:file_report' %}" class="btn btn-secondary">File Report</a>
+      <!-- CHANGED: accounts:document_request → certificates:document_request -->
+      <a href="{% url 'certificates:document_request' %}" class="btn btn-secondary">Request Certificate</a>
+      <!-- CHANGED: accounts:file_report → reports:file_report -->
+      <a href="{% url 'reports:file_report' %}" class="btn btn-secondary">File Report</a>
       
     {% else %}
       <!-- Show Login/Register for non-authenticated users -->
@@ -46,21 +48,24 @@ Barangay Labangon Digital Services{% endblock %} {% block head %}
 <section class="section quick-actions">
   <h2>Quick Actions</h2>
   <div class="grid-3" style="margin-top:12px">
-    <a href="{% url 'accounts:document_request' %}" class="card action-card">
+    <!-- CHANGED: accounts:document_request → certificates:document_request -->
+    <a href="{% url 'certificates:document_request' %}" class="card action-card">
       <div class="action-text">
         <h3>Request a Certificate</h3>
         <p>Clearance, Residency, Indigency, Good Moral, Business.</p>
       </div>
       <img src="{% static 'icons/request-records.png' %}" class="icon" alt="Request" />
     </a>
-    <a href="{% url 'accounts:file_report' %}" class="card action-card">
+    <!-- CHANGED: accounts:file_report → reports:file_report -->
+    <a href="{% url 'reports:file_report' %}" class="card action-card">
       <div class="action-text">
         <h3>File a Report</h3>
         <p>Submit incidents securely. Reviewed within 24 hours.</p>
       </div>
       <img src="{% static 'icons/file-report.png' %}" class="icon" alt="Report" />
     </a>
-    <a href="{% url 'accounts:announcements' %}" class="card action-card">
+    <!-- CHANGED: accounts:announcements → announcements:announcements -->
+    <a href="{% url 'announcements:announcements' %}" class="card action-card">
       <div class="action-text">
         <h3>Community Announcements</h3>
         <p>News, advisories, and barangay events.</p>

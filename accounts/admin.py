@@ -1,6 +1,12 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, PasswordResetCode, CertificateRequest, IncidentReport, Announcement
+from django.contrib import admin
+from .models import User, PasswordResetCode
+from certificates.models import CertificateRequest
+from reports.models import IncidentReport
+from announcements.models import Announcement
+
+# Your admin registrations here...
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
