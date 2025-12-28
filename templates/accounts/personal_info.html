@@ -1,213 +1,116 @@
+{% extends 'dashboard_base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard - LabangOnline</title>
 
-    <link rel="stylesheet" href="{% static 'css/app.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
-    <link rel="icon" href="{% static 'logo.png' %}" type="image/png" />
-    <link rel="stylesheet" href="{% static 'css/pages/personal_info.css' %}" />
-    
-  </head>
-  <body class="{% if user.is_superuser %}super-admin{% endif %}">
-    <div class="dashboard-wrapper">
-   
-      <aside class="sidebar">
-        <a class="logo" href="/">
-          <img src="{% static 'logo.png' %}" alt="Labang Logo" />
-          <span>LabangOnline</span>
-        </a>
+{% block title %}Personal Info - LabangOnline{% endblock %}
 
-        <div
-          class="notification-item"
-          onclick="window.location.href='{% url 'accounts:announcements' %}'"
-        >
-          <div class="notification-icon-wrapper">
-            <img
-              src="{% static 'icons/notification.png' %}"
-              alt="Notification"
-            />
-            <span class="notification-badge">{{ unread_count|default:0 }}</span>
-          </div>
-          <span>Announcements</span>
-        </div>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/personal_info.css' %}" />
+{% endblock %}
 
-        <ul class="menu">
-          <li class="menu-item active">
-            <a href="{% url 'accounts:personal_info' %}">
-              <img src="{% static 'icons/user-info.png' %}" alt="" />
-              <span>Personal Info</span>
-            </a>
-          </li>
-          <li
-            class="menu-item"
-            onclick="window.location.href='{% url 'accounts:document_request' %}'"
-          >
-            <a href="{% url 'accounts:document_request' %}">
-              <img src="{% static 'icons/request-records.png' %}" alt="" />
-              <span>Document Request</span>
-            </a>
-          </li>
-
-          <li
-            class="menu-item"
-            onclick="window.location.href='{% url 'accounts:file_report' %}'"
-          >
-            <a href="{% url 'accounts:file_report' %}">
-              <img src="{% static 'icons/file-report.png' %}" alt="" />
-              <span>File Report</span>
-            </a>
-          </li>
-        </ul>
-      </aside>
-
-    
-      <main class="main-content">
-        
-        <header class="topbar">
-          <span></span>
-          <button id="mode-toggle" class="btn">Toggle</button>
-          <div class="user-profile">
-            {% if user.profile_photo_url %}
-            <img src="{{ user.profile_photo_url }}" alt="User Profile" />
-            {% else %}
-            <img
-              src="{% static 'icons/default_user.png' %}"
-              alt="User Profile"
-            />
-            {% endif %}
-            <span>{{ user.full_name }}</span>
-          
-            <form method="get" action="{% url 'accounts:logout_confirm' %}">
-              <button type="submit" class="btn-logout">LOGOUT</button>
-            </form>
-          </div>
-        </header>
-
-        {% if messages %}
-        <div class="messages">
-          {% for message in messages %} {% if message.tags == 'success' %}
-          <div class="msg success">{{ message }}</div>
-          {% endif %} {% endfor %}
-        </div>
-        {% endif %}
-
-        <div class="content-wrapper">
-  
-          <div class="content-left">
-            <div class="user-header">
-              {% if user.profile_photo_url %}
-              <img src="{{ user.profile_photo_url }}" alt="User Profile" />
-              {% else %}
-              <img
-                src="{% static 'icons/default_user.png' %}"
-                alt="User Profile"
-              />
-              {% endif %}
-              <div class="user-name">
-                <h2>{{ user.full_name }}</h2>
-                {% if user.is_superuser %}
-                <span class="role admin">Admin</span>
-                {% elif user.resident_confirmation %}
-                <span class="role">Resident</span>
-                {% else %}
-                <span class="role pending">Pending Verification</span>
-                {% endif %}
-              </div>
-            </div>
-
-            <div class="info-section">
-              <h3>USER INFORMATION</h3>
-              <table class="user-info-table">
-                <tr>
-                  <td>Full Name:</td>
-                  <td>{{ user.full_name }}</td>
-                </tr>
-                <tr>
-                  <td>Username:</td>
-                  <td>{{ user.username }}</td>
-                </tr>
-                <tr>
-                  <td>Email:</td>
-                  <td>{{ user.email }}</td>
-                </tr>
-                <tr>
-                  <td>Date of Birth:</td>
-                  <td>{{ user.date_of_birth }}</td>
-                </tr>
-                <tr>
-                  <td>Civil Status:</td>
-                  <td>{{ user.civil_status|default:"Not specified" }}</td>
-                </tr>
-                <tr>
-                  <td>Address:</td>
-                  <td>
-                    {{ user.address_line }}, {{ user.barangay }}, {{ user.province }}, {{ user.postal_code }}
-                  </td>
-                </tr>
-                <tr>
-                  <td>Resident Confirmed:</td>
-                  <td>
-                    {% if user.resident_confirmation %}
-                    <span style="color: #10b981; font-weight: 600">✓ Yes</span>
-                    {% else %}
-                    <span style="color: var(--text-secondary); font-weight: 600">⏳ No</span>
-                    {% endif %}
-                  </td>
-                </tr>
-              </table>
-            </div>
-
-            <div class="info-section">
-              <h3>CONTACT INFORMATION</h3>
-              <table class="user-info-table">
-                <tr>
-                  <td>Mobile:</td>
-                  <td>{{ user.contact_number }}</td>
-                </tr>
-                <tr>
-                  <td>Email:</td>
-                  <td>{{ user.email }}</td>
-                </tr>
-              </table>
-            </div>
-
-            <div class="info-section">
-              <h3>RESIDENT ID</h3>
-              <div class="resident-id-container">
-                {% if user.resident_id_photo_url %}
-                <img src="{{ user.resident_id_photo_url }}" alt="Resident ID" class="real-id" />
-                {% else %}
-                <div class="id-placeholder">
-                  <img src="{% static 'icons/file-report.png' %}" alt="No ID" />
-                  <p>No Resident ID uploaded yet</p>
-                </div>
-                {% endif %}
-              </div>
-            </div>
-          </div>
-
-         
-          <div class="content-right">
-            <a href="{% url 'accounts:edit_profile' %}" class="action-btn"
-              >EDIT INFORMATION</a
-            >
-            {% if user.is_superuser %}
-            <a href="{% url 'accounts:admin_dashboard' %}" class="action-btn admin-btn"
-              >ADMIN DASHBOARD</a
-            >
-            {% endif %}
-            
-          </div>
-        </div>
-      </main>
+{% block content %}
+<!-- Left Column: User Information -->
+<div class="content-left">
+  <div class="user-header">
+    {% if user.profile_photo_url %}
+    <img src="{{ user.profile_photo_url }}" alt="User Profile" />
+    {% else %}
+    <img
+      src="{% static 'icons/default_user.png' %}"
+      alt="User Profile"
+    />
+    {% endif %}
+    <div class="user-name">
+      <h2>{{ user.full_name }}</h2>
+      {% if user.is_superuser %}
+      <span class="role admin">Admin</span>
+      {% elif user.resident_confirmation %}
+      <span class="role">Resident</span>
+      {% else %}
+      <span class="role pending">Pending Verification</span>
+      {% endif %}
     </div>
-    <script src="{% static 'js/dashboard.js' %}"></script>
-    
- 
-  {% include 'accounts/chatbot.html' %}
-  </body>
-</html> 
+  </div>
+
+  <div class="info-section">
+    <h3>USER INFORMATION</h3>
+    <table class="user-info-table">
+      <tr>
+        <td>Full Name:</td>
+        <td>{{ user.full_name }}</td>
+      </tr>
+      <tr>
+        <td>Username:</td>
+        <td>{{ user.username }}</td>
+      </tr>
+      <tr>
+        <td>Email:</td>
+        <td>{{ user.email }}</td>
+      </tr>
+      <tr>
+        <td>Date of Birth:</td>
+        <td>{{ user.date_of_birth }}</td>
+      </tr>
+      <tr>
+        <td>Civil Status:</td>
+        <td>{{ user.civil_status|default:"Not specified" }}</td>
+      </tr>
+      <tr>
+        <td>Address:</td>
+        <td>
+          {{ user.address_line }}, {{ user.barangay }}, {{ user.province }}, {{ user.postal_code }}
+        </td>
+      </tr>
+      <tr>
+        <td>Resident Confirmed:</td>
+        <td>
+          {% if user.resident_confirmation %}
+          <span style="color: #10b981; font-weight: 600">✓ Yes</span>
+          {% else %}
+          <span style="color: var(--text-secondary); font-weight: 600">⏳ No</span>
+          {% endif %}
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="info-section">
+    <h3>CONTACT INFORMATION</h3>
+    <table class="user-info-table">
+      <tr>
+        <td>Mobile:</td>
+        <td>{{ user.contact_number }}</td>
+      </tr>
+      <tr>
+        <td>Email:</td>
+        <td>{{ user.email }}</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="info-section">
+    <h3>RESIDENT ID</h3>
+    <div class="resident-id-container">
+      {% if user.resident_id_photo_url %}
+      <img src="{{ user.resident_id_photo_url }}" alt="Resident ID" class="real-id" />
+      {% else %}
+      <div class="id-placeholder">
+        <img src="{% static 'icons/file-report.png' %}" alt="No ID" />
+        <p>No Resident ID uploaded yet</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Right Column: Action Buttons -->
+<div class="content-right">
+  <a href="{% url 'accounts:edit_profile' %}" class="action-btn">
+    EDIT INFORMATION
+  </a>
+  {% if user.is_superuser %}
+  <a href="{% url 'administration:admin_dashboard' %}" class="action-btn admin-btn">
+    ADMIN DASHBOARD
+  </a>
+  {% endif %}
+</div>
+{% endblock %}

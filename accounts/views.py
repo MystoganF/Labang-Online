@@ -344,13 +344,13 @@ def personal_info(request):
 
     user = request.user
     
-    # Import here to avoid circular dependency
     from announcements.models import Announcement
     unread_count = Announcement.objects.filter(is_active=True).count()
 
     context = {
         'user': user,
         'unread_count': unread_count,
+        'active_page': 'personal_info',  # Highlights active menu item
     }   
     return render(request, 'accounts/personal_info.html', context)
 

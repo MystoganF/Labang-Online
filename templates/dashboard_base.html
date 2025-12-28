@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Dashboard - LabangOnline{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/app.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+    <link rel="icon" href="{% static 'logo.png' %}" type="image/png" />
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body class="{% if user.is_superuser %}super-admin{% endif %}">
+    <div class="dashboard-wrapper">
+      <!-- Reusable Sidebar Navigation -->
+      {% include 'components/sidebar.html' %}
+
+      <!-- Main Content Area -->
+      <main class="main-content">
+        <!-- Top Bar -->
+        {% include 'components/topbar.html' %}
+
+        <!-- Messages -->
+        {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+            {% if message.tags == 'success' %}
+            <div class="msg success">{{ message }}</div>
+            {% elif message.tags == 'error' %}
+            <div class="msg error">{{ message }}</div>
+            {% elif message.tags == 'warning' %}
+            <div class="msg warning">{{ message }}</div>
+            {% elif message.tags == 'info' %}
+            <div class="msg info">{{ message }}</div>
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Page Content -->
+        <div class="content-wrapper">
+          {% block content %}{% endblock %}
+        </div>
+      </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/dashboard.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+    
+    <!-- Chatbot -->
+    {% include 'accounts/chatbot.html' %}
+  </body>
+</html>
