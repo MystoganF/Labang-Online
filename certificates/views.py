@@ -24,6 +24,7 @@ def document_request(request):
     context = {
         'user': user,
         'unread_count': unread_count,
+        'active_page': 'document_request',  # This highlights the menu item
     }
     return render(request, 'certificates/document_request.html', context)
 
@@ -79,6 +80,7 @@ def certificate_requests(request):
         'paid_count': paid_count,
         'unpaid_count': unpaid_count,
         'unread_count': unread_count,
+        'active_page': 'document_request',
     }
     return render(request, 'certificates/certificate_requests.html', context)
 
@@ -116,6 +118,7 @@ def request_detail(request, request_id):
         'cert_request': cert_request,
         'next_action': next_action,
         'unread_count': unread_count,
+        'active_page': 'document_request',
     }
     return render(request, 'certificates/request_detail.html', context)
 
@@ -137,7 +140,7 @@ def barangay_clearance_request(request):
                 request, 
                 "Please provide a detailed purpose for your request (at least 10 characters)."
             )
-            context = {'user': user}
+            context = {'user': user, 'active_page': 'document_request',}
             return render(request, 'certificates/barangay_clearance_request.html', context)
         
         cert_request = CertificateRequest.objects.create(
@@ -157,6 +160,7 @@ def barangay_clearance_request(request):
     context = {
         'user': user,
         'unread_count': unread_count,
+        'active_page': 'document_request',
     }
     return render(request, 'certificates/barangay_clearance_request.html', context)
 
@@ -176,7 +180,7 @@ def brgy_residency_cert(request):
                 request, 
                 "Please provide a detailed purpose for your request (at least 10 characters)."
             )
-            context = {'user': user}
+            context = {'user': user, 'active_page': 'document_request',}
             return render(request, 'certificates/brgy_residency_cert.html', context)
         
         cert_request = CertificateRequest.objects.create(
@@ -196,6 +200,7 @@ def brgy_residency_cert(request):
     context = {
         'user': user,
         'unread_count': unread_count,
+        'active_page': 'document_request',
     }
     return render(request, 'certificates/brgy_residency_cert.html', context)
 
@@ -216,7 +221,7 @@ def brgy_indigency_cert(request):
                 request, 
                 "Please provide a detailed purpose for your request (at least 10 characters)."
             )
-            context = {'user': user}
+            context = {'user': user, 'active_page': 'document_request',}
             return render(request, 'certificates/brgy_indigency_cert.html', context)
         
         if not proof_photo:
@@ -224,7 +229,7 @@ def brgy_indigency_cert(request):
                 request, 
                 "Please upload a proof photo for your indigency certificate request."
             )
-            context = {'user': user}
+            context = {'user': user, 'active_page': 'document_request',}
             return render(request, 'certificates/brgy_indigency_cert.html', context)
 
         # Validate image type and size
@@ -237,7 +242,7 @@ def brgy_indigency_cert(request):
         max_size_mb = 5
         if hasattr(proof_photo, 'size') and proof_photo.size > max_size_mb * 1024 * 1024:
             messages.error(request, f"Image too large. Please upload a file under {max_size_mb} MB.")
-            context = {'user': user}
+            context = {'user': user, 'active_page': 'document_request',}
             return render(request, 'certificates/brgy_indigency_cert.html', context)
 
         # Upload proof photo
@@ -250,7 +255,7 @@ def brgy_indigency_cert(request):
 
         if not proof_photo_url:
             messages.error(request, "Failed to upload proof photo. Please try again later.")
-            context = {'user': user}
+            context = {'user': user, 'active_page': 'document_request',}
             return render(request, 'certificates/brgy_indigency_cert.html', context)
         
         cert_request = CertificateRequest.objects.create(
@@ -271,6 +276,7 @@ def brgy_indigency_cert(request):
     context = {
         'user': user,
         'unread_count': unread_count,
+        'active_page': 'document_request',
     }
     return render(request, 'certificates/brgy_indigency_cert.html', context)
 
@@ -290,7 +296,7 @@ def brgy_goodmoral_character(request):
                 request, 
                 "Please provide a detailed purpose for your request (at least 10 characters)."
             )
-            context = {'user': user}
+            context = {'user': user, 'active_page': 'document_request',}
             return render(request, 'certificates/brgy_goodmoral_character.html', context)
         
         cert_request = CertificateRequest.objects.create(
@@ -310,6 +316,7 @@ def brgy_goodmoral_character(request):
     context = {
         'user': user,
         'unread_count': unread_count,
+        'active_page': 'document_request',
     }
     return render(request, 'certificates/brgy_goodmoral_character.html', context)
 
@@ -334,12 +341,12 @@ def brgy_business_cert(request):
                 request, 
                 "Please provide a detailed purpose for your request (at least 10 characters)."
             )
-            context = {'user': user}
+            context = {'user': user, 'active_page': 'document_request',}
             return render(request, 'certificates/brgy_business_cert.html', context)
         
         if not all([business_name, business_type, business_nature, business_address, employees_count]):
             messages.error(request, "Please fill in all required business information fields.")
-            context = {'user': user}
+            context = {'user': user, 'active_page': 'document_request',}
             return render(request, 'certificates/brgy_business_cert.html', context)
         
         try:
@@ -348,7 +355,7 @@ def brgy_business_cert(request):
                 raise ValueError("Number of employees cannot be negative")
         except ValueError:
             messages.error(request, "Please enter a valid number of employees.")
-            context = {'user': user}
+            context = {'user': user, 'active_page': 'document_request',}
             return render(request, 'certificates/brgy_business_cert.html', context)
         
         cert_request = CertificateRequest.objects.create(
@@ -373,6 +380,7 @@ def brgy_business_cert(request):
     context = {
         'user': user,
         'unread_count': unread_count,
+        'active_page': 'document_request',
     }
     return render(request, 'certificates/brgy_business_cert.html', context)
 
@@ -400,6 +408,7 @@ def payment_mode_selection(request, request_id):
             context = {
                 'user': user,
                 'cert_request': cert_request,
+                'active_page': 'document_request',
             }
             return render(request, 'certificates/payment_mode_selection.html', context)
         
@@ -415,6 +424,7 @@ def payment_mode_selection(request, request_id):
         'user': user,
         'cert_request': cert_request,
         'unread_count': unread_count,
+        'active_page': 'document_request',
     }
     return render(request, 'certificates/payment_mode_selection.html', context)
 
@@ -444,6 +454,7 @@ def gcash_payment(request, request_id):
             context = {
                 'user': user,
                 'cert_request': cert_request,
+                'active_page': 'document_request',
             }
             return render(request, 'certificates/gcash_payment.html', context)
         
@@ -452,6 +463,7 @@ def gcash_payment(request, request_id):
             context = {
                 'user': user,
                 'cert_request': cert_request,
+                'active_page': 'document_request',
             }
             return render(request, 'certificates/gcash_payment.html', context)
         
@@ -471,6 +483,7 @@ def gcash_payment(request, request_id):
         'user': user,
         'cert_request': cert_request,
         'unread_count': unread_count,
+        'active_page': 'document_request',
     }
     return render(request, 'certificates/gcash_payment.html', context)
 
@@ -502,6 +515,7 @@ def counter_payment(request, request_id):
         'user': user,
         'cert_request': cert_request,
         'unread_count': unread_count,
+        'active_page': 'document_request',
     }
     return render(request, 'certificates/counter_payment.html', context)
 

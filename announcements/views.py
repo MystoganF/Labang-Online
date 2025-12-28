@@ -36,6 +36,8 @@ def announcements(request):
         'user': user,
         'announcements': announcements_list,
         'unread_count': unread_count,
+        'active_page': 'announcements',
+        
     }
     
     return render(request, 'announcements/announcements.html', context)

@@ -1,0 +1,149 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Document Request - LabangOnline{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/document_request.css' %}" />
+
+{% endblock %}
+
+{% block page_title %}Document Request{% endblock %}
+
+{% block content %}
+<div class="request-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-header-row">
+      <h1>Request Certificate</h1>
+      <a href="{% url 'certificates:certificate_requests' %}" class="view-records-btn">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        View Request Records
+      </a>
+    </div>
+    <p>Select the type of certificate you need and we'll guide you through the process</p>
+  </div>
+
+  <!-- Info Banner -->
+  <div class="info-banner">
+    <svg class="info-banner-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
+    <div class="info-banner-content">
+      <p><strong>Important:</strong> Make sure your profile information is complete and accurate before requesting certificates. Processing time is typically 3-5 business days.</p>
+    </div>
+  </div>
+
+  <!-- Certificates Grid -->
+  <div class="certificates-grid">
+    <!-- Barangay Clearance -->
+    <div class="certificate-card" onclick="window.location.href='{% url 'certificates:barangay_clearance_request' %}'">
+      <div class="card-icon">
+        <img src="{% static 'icons/file-report.png' %}" alt="Certificate" />
+      </div>
+      <h3 class="card-title">Barangay Clearance</h3>
+      <p class="card-description">
+        Required for employment, business permits, and other legal purposes within the barangay.
+      </p>
+      <div class="card-footer">
+        <span class="card-price">₱50.00</span>
+        <div class="card-arrow">
+          <svg width="16" height="16" fill="none" stroke="#10b981" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Certificate of Residency -->
+    <div class="certificate-card" onclick="window.location.href='{% url 'certificates:brgy_residency_cert' %}'">
+      <div class="card-icon">
+        <img src="{% static 'icons/resident-record.png' %}" alt="Certificate" />
+      </div>
+      <h3 class="card-title">Certificate of Residency</h3>
+      <p class="card-description">
+        Proof of residence in Barangay Labangon for government transactions and applications.
+      </p>
+      <div class="card-footer">
+        <span class="card-price">₱30.00</span>
+        <div class="card-arrow">
+          <svg width="16" height="16" fill="none" stroke="#10b981" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Certificate of Indigency -->
+    <div class="certificate-card" onclick="window.location.href='{% url 'certificates:brgy_indigency_cert' %}'">
+      <div class="card-icon">
+        <img src="{% static 'icons/file-report.png' %}" alt="Certificate" />
+      </div>
+      <h3 class="card-title">Certificate of Indigency</h3>
+      <p class="card-description">
+        For residents requiring financial assistance or applying for free medical services.
+      </p>
+      <div class="card-footer">
+        <span class="card-price">₱20.00</span>
+        <div class="card-arrow">
+          <svg width="16" height="16" fill="none" stroke="#10b981" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Good Moral Character -->
+    <div class="certificate-card" onclick="window.location.href='{% url 'certificates:brgy_goodmoral_character' %}'">
+      <div class="card-icon">
+        <img src="{% static 'icons/user-info.png' %}" alt="Certificate" />
+      </div>
+      <h3 class="card-title">Good Moral Character</h3>
+      <p class="card-description">
+        Required for school applications, employment, and character reference purposes.
+      </p>
+      <div class="card-footer">
+        <span class="card-price">₱40.00</span>
+        <div class="card-arrow">
+          <svg width="16" height="16" fill="none" stroke="#10b981" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Business Clearance -->
+    <div class="certificate-card" onclick="window.location.href='{% url 'certificates:brgy_business_cert' %}'">
+      <div class="card-icon">
+        <img src="{% static 'icons/file-report.png' %}" alt="Certificate" />
+      </div>
+      <h3 class="card-title">Business Clearance</h3>
+      <p class="card-description">
+        Required for starting or renewing a business within Barangay Labangon.
+      </p>
+      <div class="card-footer">
+        <span class="card-price">₱100.00</span>
+        <div class="card-arrow">
+          <svg width="16" height="16" fill="none" stroke="#10b981" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- General Requirements -->
+  <div class="requirements-section">
+    <h2>General Requirements</h2>
+    <ul class="requirements-list">
+      <li>Valid government-issued ID</li>
+      <li>Proof of residency in Barangay Labangon</li>
+      <li>Completed and verified user profile</li>
+      <li>Payment for processing fees (if applicable)</li>
+      <li>Additional documents may be required depending on certificate type</li>
+    </ul>
+  </div>
+</div>
+{% endblock %}

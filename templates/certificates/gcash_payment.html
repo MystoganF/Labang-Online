@@ -1,0 +1,130 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}GCash Payment - LabangOnline{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/gcash_payment.css' %}" />
+{% endblock %}
+
+{% block page_title %}GCash Payment{% endblock %}
+
+{% block content %}
+<div class="payment-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>GCash Payment</h1>
+    <p>Complete your payment using GCash</p>
+  </div>
+
+  <!-- Request Info -->
+  <div class="request-info">
+    <div class="info-row">
+      <span class="info-label">Request ID</span>
+      <span class="info-value">{{ cert_request.request_id }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Certificate Type</span>
+      <span class="info-value">{{ cert_request.get_certificate_type_display }}</span>
+    </div>
+  </div>
+
+  <!-- Instructions Card -->
+  <div class="instructions-card">
+    <h3 class="instructions-title">
+      <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      Payment Instructions
+    </h3>
+    <ol class="instructions-list">
+      <li>
+        <span class="step-number">1</span>
+        <span>Open your GCash app on your mobile device</span>
+      </li>
+      <li>
+        <span class="step-number">2</span>
+        <span>Tap "Scan QR" and scan the QR code below</span>
+      </li>
+      <li>
+        <span class="step-number">3</span>
+        <span>Verify the payment amount matches ₱{{ cert_request.payment_amount }}</span>
+      </li>
+      <li>
+        <span class="step-number">4</span>
+        <span>Complete the payment in your GCash app</span>
+      </li>
+      <li>
+        <span class="step-number">5</span>
+        <span>Enter your GCash reference number below after payment</span>
+      </li>
+    </ol>
+  </div>
+
+  <!-- QR Code Section -->
+  <div class="qr-section">
+    <h3 class="qr-title">Scan QR Code with GCash</h3>
+    <p class="qr-subtitle">Use your GCash app to scan this QR code</p>
+    
+    <div class="qr-code-wrapper">
+      <img src="{% static 'images/gcash-qr-code.png' %}" alt="GCash QR Code">
+    </div>
+
+    <div class="amount-display">
+      <div class="amount-label">Amount to Pay</div>
+      <div class="amount-value">₱{{ cert_request.payment_amount }}</div>
+    </div>
+  </div>
+
+  <!-- Reference Form -->
+  <form method="POST">
+    {% csrf_token %}
+    <div class="reference-form">
+      <h3 class="form-title">Enter GCash Reference Number</h3>
+      <p class="form-subtitle">After completing the payment, enter the reference number from your GCash receipt</p>
+
+      <div class="warning-box">
+        <svg class="warning-icon" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+        </svg>
+        <div class="warning-content">
+          <p><strong>Important:</strong> Make sure to enter the correct reference number. Your payment will be verified by our staff within 24 hours.</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>GCash Reference Number <span style="color: var(--brand)">*</span></label>
+        <input 
+          type="text" 
+          name="reference_number" 
+          placeholder="Enter your GCash reference number"
+          required
+          pattern="[0-9A-Za-z]{10,}"
+          title="Reference number must be at least 10 characters"
+        >
+        <p class="input-hint">Example: 1234567890ABC (usually 13 characters)</p>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <a href="{% url 'certificates:payment_mode_selection' cert_request.request_id %}" class="btn-back">Back</a>
+      <button type="submit" class="btn-submit">Submit Payment Reference</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Add any JavaScript specific to GCash payment here
+  document.querySelector('form').addEventListener('submit', function(e) {
+    const refInput = document.querySelector('input[name="reference_number"]');
+    if (!refInput.value.match(/^[0-9A-Za-z]{10,}$/)) {
+      e.preventDefault();
+      alert('Please enter a valid GCash reference number (at least 10 characters, letters and numbers only).');
+      refInput.focus();
+    }
+  });
+</script>
+{% endblock %}

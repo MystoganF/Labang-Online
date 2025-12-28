@@ -1,0 +1,83 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Report Details - LabangOnline{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/report_detail.css' %}" />
+{% endblock %}
+
+{% block page_title %}Report Details{% endblock %}
+
+{% block content %}
+<div class="details-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>Report Details</h1>
+    <a href="{% url 'reports:report_records' %}" class="back-link">
+      <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Back to Reports
+    </a>
+  </div>
+
+  <!-- Details Grid -->
+  <div class="details-grid">
+    <!-- Overview Card -->
+    <div class="details-card">
+      <h2>Overview</h2>
+      <div class="details-row">
+        <div class="label">Report ID</div>
+        <div class="value">{{ report.report_id }}</div>
+      </div>
+      <div class="details-row">
+        <div class="label">Incident Type</div>
+        <div class="value">{{ report.incident_type }}</div>
+      </div>
+      <div class="details-row">
+        <div class="label">Place of Incident</div>
+        <div class="value">{{ report.place }}</div>
+      </div>
+      <div class="details-row">
+        <div class="label">Date Reported</div>
+        <div class="value">{{ report.created_at|date:"M d, Y - h:i A" }}</div>
+      </div>
+      <div class="details-row">
+        <div class="label">Status</div>
+        <div class="value">
+          {% if report.status == "Under Investigation" %}
+            <span class="status-badge under-investigation">{{ report.status }}</span>
+          {% elif report.status == "Pending" %}
+            <span class="status-badge pending">{{ report.status }}</span>
+          {% elif report.status == "Resolved" %}
+            <span class="status-badge resolved">{{ report.status }}</span>
+          {% elif report.status == "Mediation Scheduled" %}
+            <span class="status-badge mediation-scheduled">{{ report.status }}</span>
+          {% else %}
+            <span class="status-badge">{{ report.status }}</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Description Card -->
+    <div class="details-card">
+      <h2>Description</h2>
+      <div class="report-description">
+        {{ report.message|linebreaks }}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<style>
+  .report-description {
+    margin-top: 10px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+</style>
+{% endblock %}

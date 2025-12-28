@@ -1,14 +1,13 @@
 {% load static %}
 <aside class="sidebar">
-  <!-- Logo -->
   <a class="logo" href="/">
     <img src="{% static 'logo.png' %}" alt="Labang Logo" />
     <span>LabangOnline</span>
   </a>
 
-  <!-- Announcements Notification -->
+   <!-- FIX: Add active class condition to notification-item -->
   <div
-    class="notification-item"
+    class="notification-item {% if active_page == 'announcements' %}active{% endif %}"
     onclick="window.location.href='{% url 'announcements:announcements' %}'"
   >
     <div class="notification-icon-wrapper">
@@ -21,25 +20,29 @@
     <span>Announcements</span>
   </div>
 
-  <!-- Navigation Menu -->
   <ul class="menu">
     <li class="menu-item {% if active_page == 'personal_info' %}active{% endif %}">
       <a href="{% url 'accounts:personal_info' %}">
-        <img src="{% static 'icons/user-info.png' %}" alt="Personal Info" />
+        <img src="{% static 'icons/user-info.png' %}" alt="" />
         <span>Personal Info</span>
       </a>
     </li>
-    
-    <li class="menu-item {% if active_page == 'document_request' %}active{% endif %}">
+    <li
+      class="menu-item {% if active_page == 'document_request' %}active{% endif %}"
+      onclick="window.location.href='{% url 'certificates:document_request' %}'"
+    >
       <a href="{% url 'certificates:document_request' %}">
-        <img src="{% static 'icons/request-records.png' %}" alt="Document Request" />
+        <img src="{% static 'icons/request-records.png' %}" alt="" />
         <span>Document Request</span>
       </a>
     </li>
 
-    <li class="menu-item {% if active_page == 'file_report' %}active{% endif %}">
+    <li
+      class="menu-item {% if active_page == 'file_report' %}active{% endif %}"
+      onclick="window.location.href='{% url 'reports:file_report' %}'"
+    >
       <a href="{% url 'reports:file_report' %}">
-        <img src="{% static 'icons/file-report.png' %}" alt="File Report" />
+        <img src="{% static 'icons/file-report.png' %}" alt="" />
         <span>File Report</span>
       </a>
     </li>

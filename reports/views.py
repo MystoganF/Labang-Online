@@ -8,6 +8,7 @@ from django.views.decorators.cache import never_cache
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db import models
+import uuid
 
 from .models import IncidentReport
 from announcements.models import Announcement
@@ -54,6 +55,7 @@ def report_records(request):
         'investigation_count': investigation_count,
         'resolved_count': resolved_count,
         'unread_count': unread_count,
+        'active_page': 'file_report',
     }
     return render(request, 'reports/report_records.html', context)
 
@@ -70,6 +72,8 @@ def report_detail(request, report_id):
         'user': user,
         'report': report,
         'unread_count': unread_count,
+        'active_page': 'file_report',
+        
     }
     return render(request, 'reports/report_detail.html', context)
 
@@ -89,14 +93,14 @@ def file_report(request):
         # Validation
         if not report_type or not place or not message:
             messages.error(request, "All fields are required. Please fill in all the information.")
-            context = {'user': user}
+            context = {'user': user, 'active_page': 'file_report',}
             return render(request, 'reports/file_report.html', context)
         
         # Validate report type
         valid_report_types = ['Theft', 'Assault', 'Vandalism', 'Disturbance', 'Other']
         if report_type not in valid_report_types:
             messages.error(request, "Invalid report type selected.")
-            context = {'user': user}
+            context = {'user': user, 'active_page': 'file_report',}
             return render(request, 'reports/file_report.html', context)
         
         # Validate place (minimum length)
@@ -114,7 +118,7 @@ def file_report(request):
                 request, 
                 "Please provide a detailed description (at least 20 characters)."
             )
-            context = {'user': user}
+            context = {'user': user, 'active_page': 'file_report',}
             return render(request, 'reports/file_report.html', context)
         
         # Create the incident report
@@ -131,11 +135,12 @@ def file_report(request):
             
         except Exception as e:
             messages.error(request, f"An error occurred while submitting your report: {str(e)}")
-            context = {'user': user}
+            context = {'user': user, 'active_page': 'file_report','active_page': 'file_report',}
             return render(request, 'reports/file_report.html', context)
 
     context = {
         'user': user,
         'unread_count': unread_count,
+        'active_page': 'file_report',
     }
     return render(request, 'reports/file_report.html', context)

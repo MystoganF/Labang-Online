@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-
+import uuid
 class IncidentReport(models.Model):
     REPORT_TYPES = [
         ('Theft', 'Theft'),

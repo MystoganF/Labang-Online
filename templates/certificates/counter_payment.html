@@ -1,0 +1,111 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}On-site Payment - LabangOnline{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/counter_payment.css' %}" />
+{% endblock %}
+
+{% block page_title %}On-site Payment{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="print-header">LabangOnline • On-site Payment Slip</div>
+  
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>On-site Payment</h1>
+    <div class="page-subtitle">
+      Pay at the Barangay Hall cashier. Bring your Request ID.
+    </div>
+  </div>
+
+  <!-- Request Summary Panel -->
+  <div class="panel">
+    <h2>Request Summary</h2>
+    <div class="details-grid">
+      <div class="detail-item">
+        <span class="detail-label">Request ID</span>
+        <span class="request-id">{{ cert_request.request_id }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Certificate Type</span>
+        <span>{{ cert_request.get_certificate_type_display }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Amount</span>
+        <span class="amount">₱{{ cert_request.payment_amount }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Payment Mode</span>
+        <span>{{ cert_request.get_payment_mode_display }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Instructions Panel -->
+  <div class="panel">
+    <h2>How to Pay On-site</h2>
+    <div class="steps">
+      <ol>
+        <li>
+          Go to Barangay Hall of Labangon Cashier within office hours.
+        </li>
+        <li>
+          Present your Request ID:
+          <span class="request-id">{{ cert_request.request_id }}</span>.
+        </li>
+        <li>
+          Pay the amount of
+          <strong>₱{{ cert_request.payment_amount }}</strong>.
+        </li>
+        <li>
+          Keep the official receipt. Your payment will be verified by
+          our staff.
+        </li>
+      </ol>
+    </div>
+    
+    <div class="alert">
+      Note: After you click "I will pay on-site", we'll mark this
+      request as pending verification until your payment is confirmed at
+      the cashier.
+    </div>
+
+    <!-- Payment Form -->
+    <form method="post">
+      {% csrf_token %}
+      <div class="actions">
+        <button type="submit" class="btn-primary">I will pay on-site</button>
+        <a href="{% url 'certificates:payment_mode_selection' cert_request.request_id %}" class="btn-secondary">
+          Back to Payment Options
+        </a>
+      </div>
+    </form>
+
+    <!-- Print Section -->
+    <div class="print-card">
+      <div>
+        <div class="print-title">Payment Slip</div>
+        <div class="print-sub">
+          Print or screenshot this page to bring to the cashier.
+        </div>
+      </div>
+      <button class="btn-secondary" onclick="window.print()">
+        Print
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Add any JavaScript specific to counter payment here
+  // For example, print functionality enhancement
+  window.addEventListener('beforeprint', function() {
+    // Add any pre-print modifications here
+  });
+</script>
+{% endblock %}

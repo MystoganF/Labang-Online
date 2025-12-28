@@ -1,0 +1,113 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Request Business Certificate - LabangOnline{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/forms.css' %}">
+<link rel="stylesheet" href="{% static 'css/pages/brgy_business_cert.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-header">
+        <h1>Business Clearance</h1>
+        <p>Please fill out the form below to request your business clearance</p>
+    </div>
+
+    <div class="info-box">
+        <svg class="info-box-icon" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <div class="info-box-content">
+            <p><strong>Processing Time:</strong> 3-5 business days after payment verification. Make sure all information is accurate before submitting.</p>
+        </div>
+    </div>
+
+    <form method="POST" action="{% url 'certificates:brgy_business_cert' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-card">
+            <div class="form-section">
+                <h3 class="section-title">Personal Information</h3>
+                
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="full_name" value="{{ user.full_name }}" readonly class="readonly-field">
+                </div>
+
+                <div class="form-group">
+                    <label>Address</label>
+                    <input type="text" name="address" value="{{ user.address_line }}, {{ user.barangay }}, {{ user.city }}" readonly class="readonly-field">
+                </div>
+
+                <div class="form-group">
+                    <label>Contact Number</label>
+                    <input type="text" name="contact_number" value="{{ user.contact_number }}" readonly class="readonly-field">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">Business Information</h3>
+                
+                <div class="form-group">
+                    <label>Business Name <span style="color: var(--brand)">*</span></label>
+                    <input type="text" name="business_name" required placeholder="Enter your business name">
+                </div>
+
+                <div class="form-group">
+                    <label>Business Type <span style="color: var(--brand)">*</span></label>
+                    <select name="business_type" required>
+                        <option value="">Select Business Type</option>
+                        <option value="Sole Proprietorship">Sole Proprietorship</option>
+                        <option value="Partnership">Partnership</option>
+                        <option value="Corporation">Corporation</option>
+                        <option value="Cooperative">Cooperative</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Business Nature <span style="color: var(--brand)">*</span></label>
+                    <input type="text" name="business_nature" required placeholder="e.g., Sari-sari store, Internet café, Food stall, etc.">
+                </div>
+
+                <div class="form-group">
+                    <label>Business Address <span style="color: var(--brand)">*</span></label>
+                    <textarea name="business_address" required placeholder="Enter the complete address of your business"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Number of Employees <span style="color: var(--brand)">*</span></label>
+                    <input type="number" name="employees_count" required min="0" placeholder="Enter number of employees">
+                </div>
+                
+                <div class="form-group">
+                    <p style="color: #9ca3af; font-size: 14px; margin-top: 8px;">
+                        <strong>Note:</strong> All business information will be stored securely and will be visible in your request details for reference.
+                        This information will be used for verification and processing of your business clearance.
+                    </p>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">Request Details</h3>
+                
+                <div class="form-group">
+                    <label>Purpose of Request <span style="color: var(--brand)">*</span></label>
+                    <textarea name="purpose" required placeholder="Please specify the purpose of this business clearance (e.g., Business Permit Renewal, New Business Registration, etc.)"></textarea>
+                </div>
+            </div>
+
+            <div class="price-display">
+                <div class="price-label">Processing Fee</div>
+                <div class="price-amount">₱100.00</div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'certificates:document_request' %}" class="btn-cancel">Cancel</a>
+            <button type="submit" class="btn-submit">Proceed to Payment</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

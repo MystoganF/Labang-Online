@@ -1,0 +1,310 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Certificate Requests - LabangOnline{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/certificate_requests.css' %}" />
+{% endblock %}
+
+{% block page_title %}Certificate Requests{% endblock %}
+
+{% block content %}
+<div class="records-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-top">
+      <h1>Certificate Request Records</h1>
+      <a href="{% url 'certificates:document_request' %}" class="new-request-btn">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-right: 8px;">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        New Request
+      </a>
+    </div>
+    <p>Track and manage all your certificate requests in one place</p>
+  </div>
+
+  <!-- Summary Grid -->
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="summary-label">Total Requests</div>
+      <div class="summary-value">{{ total_requests }}</div>
+    </div>
+    <div class="summary-card pending">
+      <div class="summary-label">Pending Payment</div>
+      <div class="summary-value">{{ pending_count }}</div>
+    </div>
+    <div class="summary-card paid">
+      <div class="summary-label">Paid</div>
+      <div class="summary-value">{{ paid_count }}</div>
+    </div>
+    <div class="summary-card unpaid">
+      <div class="summary-label">Unpaid</div>
+      <div class="summary-value">{{ unpaid_count }}</div>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <form method="GET" id="filterForm">
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label>Certificate Type</label>
+          <select name="certificate_type" id="certificateTypeFilter">
+            <option value="">All Types</option>
+            <option value="barangay_clearance" {% if request.GET.certificate_type == 'barangay_clearance' %}selected{% endif %}>Barangay Clearance</option>
+            <option value="residency" {% if request.GET.certificate_type == 'residency' %}selected{% endif %}>Certificate of Residency</option>
+            <option value="indigency" {% if request.GET.certificate_type == 'indigency' %}selected{% endif %}>Certificate of Indigency</option>
+            <option value="good_moral" {% if request.GET.certificate_type == 'good_moral' %}selected{% endif %}>Good Moral Character</option>
+            <option value="business_clearance" {% if request.GET.certificate_type == 'business_clearance' %}selected{% endif %}>Business Clearance</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Payment Status</label>
+          <select name="payment_status" id="paymentStatusFilter">
+            <option value="">All Status</option>
+            <option value="unpaid" {% if request.GET.payment_status == 'unpaid' %}selected{% endif %}>Unpaid</option>
+            <option value="pending" {% if request.GET.payment_status == 'pending' %}selected{% endif %}>Pending Verification</option>
+            <option value="paid" {% if request.GET.payment_status == 'paid' %}selected{% endif %}>Paid</option>
+            <option value="failed" {% if request.GET.payment_status == 'failed' %}selected{% endif %}>Failed Verification</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Claim Status</label>
+          <select name="claim_status" id="claimStatusFilter">
+            <option value="">All Status</option>
+            <option value="processing" {% if request.GET.claim_status == 'processing' %}selected{% endif %}>Processing</option>
+            <option value="ready" {% if request.GET.claim_status == 'ready' %}selected{% endif %}>Ready for Claim</option>
+            <option value="claimed" {% if request.GET.claim_status == 'claimed' %}selected{% endif %}>Claimed</option>
+            <option value="failed" {% if request.GET.claim_status == 'failed' %}selected{% endif %}>Failed</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Payment Mode</label>
+          <select name="payment_mode" id="paymentModeFilter">
+            <option value="">All Modes</option>
+            <option value="gcash" {% if request.GET.payment_mode == 'gcash' %}selected{% endif %}>GCash</option>
+            <option value="counter" {% if request.GET.payment_mode == 'counter' %}selected{% endif %}>Over-the-Counter</option>
+          </select>
+        </div>
+      </div>
+      <div class="filter-actions">
+        <button type="button" class="btn-clear-filters" onclick="clearFilters()">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-right: 6px;">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          Clear Filters
+        </button>
+        <button type="submit" class="btn-apply-filters">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-right: 6px;">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+          </svg>
+          Apply Filters
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Records Table -->
+  <div class="records-table-wrapper">
+    <div class="table-header">
+      <h2>Request History</h2>
+    </div>
+
+    {% if requests %}
+    <table class="records-table">
+      <thead>
+        <tr>
+          <th>Request ID</th>
+          <th>Certificate Type</th>
+          <th>Transaction Date</th>
+          <th>Payment Mode</th>
+          <th>Amount</th>
+          <th>Payment Status</th>
+          <th>Claim Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for req in requests %}
+        <tr onclick="window.location.href='{% url 'certificates:request_detail' req.request_id %}'">
+          <td><span class="request-id">{{ req.request_id }}</span></td>
+          <td>{{ req.get_certificate_type_display }}</td>
+          <td>{{ req.created_at|date:"M d, Y - h:i A" }}</td>
+          <td>
+            {% if req.payment_mode %}
+              {{ req.get_payment_mode_display }}
+            {% else %}
+              <span class="not-selected">Not selected</span>
+            {% endif %}
+          </td>
+          <td>₱{{ req.payment_amount }}</td>
+          <td>
+            <span class="status-badge {{ req.payment_status }}">
+              {{ req.get_payment_status_display }}
+            </span>
+          </td>
+          <td>
+            <span class="status-badge {{ req.claim_status }}">
+              {{ req.get_claim_status_display }}
+            </span>
+          </td>
+          <td onclick="event.stopPropagation()">
+            <div class="action-buttons">
+              <a href="{% url 'certificates:request_detail' req.request_id %}" class="btn-action btn-view">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                </svg>
+                View
+              </a>
+              {% if req.payment_status == 'unpaid' %}
+              <a href="{% url 'certificates:payment_mode_selection' req.request_id %}" class="btn-action btn-pay">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+                Pay Now
+              </a>
+              <button type="button" class="btn-action btn-cancel" onclick="showCancelConfirmation('{{ req.request_id }}')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                Cancel
+              </button>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <svg class="empty-state-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+      </svg>
+      <h3>No Certificate Requests Yet</h3>
+      <p>You haven't submitted any certificate requests. Start by requesting a certificate.</p>
+      <a href="{% url 'certificates:document_request' %}" class="new-request-btn">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-right: 8px;">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        Request Certificate
+      </a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Cancel Confirmation Modal -->
+<div id="cancelModal" class="modal-overlay">
+  <div class="modal-container">
+    <div class="modal-header">
+      <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+      </svg>
+      <h3>Cancel Certificate Request</h3>
+    </div>
+    <div class="modal-content">
+      <p>Are you sure you want to cancel this certificate request?</p>
+      <p class="warning">This action cannot be undone.</p>
+      <p>Your request will be permanently deleted from the system.</p>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="modal-btn modal-btn-cancel" onclick="hideCancelConfirmation()">No, Keep Request</button>
+      <button type="button" class="modal-btn modal-btn-confirm" id="confirmCancelBtn">Yes, Cancel Request</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  let currentRequestId = null;
+  
+  function showCancelConfirmation(requestId) {
+    currentRequestId = requestId;
+    document.getElementById('cancelModal').classList.add('active');
+    document.getElementById('confirmCancelBtn').onclick = function() {
+      window.location.href = "{% url 'certificates:cancel_request' '000' %}".replace('000', requestId);
+    };
+  }
+  
+  function hideCancelConfirmation() {
+    document.getElementById('cancelModal').classList.remove('active');
+    currentRequestId = null;
+  }
+  
+  // Close modal when clicking outside
+  document.getElementById('cancelModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+      hideCancelConfirmation();
+    }
+  });
+
+  function clearFilters() {
+    // Reset all selects to first option
+    document.getElementById('certificateTypeFilter').selectedIndex = 0;
+    document.getElementById('paymentStatusFilter').selectedIndex = 0;
+    document.getElementById('claimStatusFilter').selectedIndex = 0;
+    document.getElementById('paymentModeFilter').selectedIndex = 0;
+    
+    // Redirect to clean URL
+    window.location.href = "{% url 'certificates:certificate_requests' %}";
+  }
+
+  // Show loading state on form submission
+  function showLoadingState() {
+    const applyBtn = document.querySelector('.btn-apply-filters');
+    const originalText = applyBtn.innerHTML;
+    applyBtn.innerHTML = '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-right: 6px; animation: spin 1s linear infinite;"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>Applying...';
+    applyBtn.disabled = true;
+    
+    // Add CSS for spin animation if not exists
+    if (!document.getElementById('spinAnimation')) {
+      const style = document.createElement('style');
+      style.id = 'spinAnimation';
+      style.textContent = '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
+      document.head.appendChild(style);
+    }
+    
+    return originalText;
+  }
+
+  // Add visual feedback when filters change
+  document.querySelectorAll('.filter-group select').forEach(select => {
+    select.addEventListener('change', function(e) {
+      const applyBtn = document.querySelector('.btn-apply-filters');
+      if (!applyBtn.classList.contains('filters-changed')) {
+        applyBtn.classList.add('filters-changed');
+        applyBtn.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.3)';
+        applyBtn.style.transform = 'scale(1.02)';
+      }
+    });
+  });
+
+  // Handle form submission with loading state
+  document.getElementById('filterForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const originalText = showLoadingState();
+    
+    const formData = new FormData(this);
+    const params = new URLSearchParams();
+    
+    for (const [key, value] of formData.entries()) {
+      if (value) {  
+        params.append(key, value);
+      }
+    }
+
+    setTimeout(() => {
+      const queryString = params.toString();
+      window.location.href = queryString ? 
+        "{% url 'certificates:certificate_requests' %}?" + queryString : 
+        "{% url 'certificates:certificate_requests' %}";
+    }, 300);
+  });
+</script>
+{% endblock %}

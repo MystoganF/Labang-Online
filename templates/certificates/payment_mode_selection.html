@@ -1,0 +1,114 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Select Payment Mode - LabangOnline{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/payment_mode_selection.css' %}" />
+{% endblock %}
+
+{% block page_title %}Select Payment Mode{% endblock %}
+
+{% block content %}
+<div class="payment-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>Select Payment Mode</h1>
+    <p>Choose how you'd like to pay for your certificate request</p>
+  </div>
+
+  <!-- Request Summary -->
+  <div class="summary-card">
+    <h3 class="summary-title">Request Summary</h3>
+    <div class="summary-row">
+      <span class="summary-label">Request ID</span>
+      <span class="summary-value">{{ cert_request.request_id }}</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-label">Certificate Type</span>
+      <span class="summary-value">{{ cert_request.get_certificate_type_display }}</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-label">Processing Fee</span>
+      <span class="summary-value">₱{{ cert_request.payment_amount }}</span>
+    </div>
+  </div>
+
+  <!-- Payment Form -->
+  <form method="POST" id="paymentForm">
+    {% csrf_token %}
+    <input type="hidden" name="payment_mode" id="paymentModeInput" value="">
+
+    <div class="payment-options">
+      <!-- GCash Option -->
+      <div class="payment-option" onclick="selectPayment('gcash')">
+        <div class="radio-indicator"></div>
+        <div class="payment-icon-wrapper">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+          </svg>
+        </div>
+        <h3 class="payment-title">GCash Payment</h3>
+        <p class="payment-description">Pay online using your GCash wallet. Fast, secure, and convenient.</p>
+        <ul class="payment-features">
+          <li>Instant payment confirmation</li>
+          <li>Scan QR code with GCash app</li>
+          <li>Available 24/7</li>
+        </ul>
+      </div>
+
+      <!-- Counter Payment Option -->
+      <div class="payment-option" onclick="selectPayment('counter')">
+        <div class="radio-indicator"></div>
+        <div class="payment-icon-wrapper">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+          </svg>
+        </div>
+        <h3 class="payment-title">Pay at Counter</h3>
+        <p class="payment-description">Pay in person at the Barangay Hall counter during office hours.</p>
+        <ul class="payment-features">
+          <li>Pay with cash</li>
+          <li>Get official receipt</li>
+          <li>Personal assistance available</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <a href="{% url 'certificates:document_request' %}" class="btn-back">Pay Later</a>
+      <button type="submit" class="btn-continue" id="continueBtn" disabled>Continue to Payment</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  let selectedMode = null;
+
+  function selectPayment(mode) {
+    // Remove selected class from all options
+    document.querySelectorAll('.payment-option').forEach(opt => {
+      opt.classList.remove('selected');
+    });
+
+    // Add selected class to clicked option
+    event.currentTarget.classList.add('selected');
+
+    // Set the selected mode
+    selectedMode = mode;
+    document.getElementById('paymentModeInput').value = mode;
+    document.getElementById('continueBtn').disabled = false;
+  }
+
+  // Validate form submission
+  document.getElementById('paymentForm').addEventListener('submit', function(e) {
+    if (!selectedMode) {
+      e.preventDefault();
+      alert('Please select a payment mode');
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,149 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Request Certificate of Indigency - LabangOnline{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/forms.css' %}" />
+<link rel="stylesheet" href="{% static 'css/pages/brgy_indigency_cert.css' %}" />
+{% endblock %}
+
+{% block page_title %}Certificate of Indigency Request{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  {% if messages %}
+  <div class="messages-container">
+    {% for message in messages %}
+      <div class="message alert-{{ message.tags }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Form Header -->
+  <div class="form-header">
+    <h1>Certificate of Indigency</h1>
+    <p>Please fill out the form below to request your certificate of indigency</p>
+  </div>
+
+  <!-- Info Box -->
+  <div class="info-box">
+    <svg class="info-box-icon" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
+    <div class="info-box-content">
+      <p><strong>Processing Time:</strong> 3-5 business days after payment verification. Make sure all information is accurate before submitting.</p>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <form method="POST" action="{% url 'certificates:brgy_indigency_cert' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <div class="form-card">
+      <!-- Personal Information Section -->
+      <div class="form-section">
+        <h3 class="section-title">Personal Information</h3>
+        
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" name="full_name" value="{{ user.full_name }}" readonly class="readonly-field">
+        </div>
+
+        <div class="form-group">
+          <label>Address</label>
+          <input type="text" name="address" value="{{ user.address_line }}, {{ user.barangay }}, {{ user.city }}" readonly class="readonly-field">
+        </div>
+
+        <div class="form-group">
+          <label>Contact Number</label>
+          <input type="text" name="contact_number" value="{{ user.contact_number }}" readonly class="readonly-field">
+        </div>
+      </div>
+
+      <!-- Financial Proof Requirement Section -->
+      <div class="form-section">
+        <h3 class="section-title">Financial Proof Requirement</h3>
+        
+        <div class="form-group">
+          <label>Financial Proof Image <span style="color: var(--brand)">*</span></label>
+          <input type="file" name="proof_photo" accept="image/*" required>
+          <div class="file-upload-hint">Please attach a picture proof about your financial status (e.g., pay slip, income statement, etc.)</div>
+        </div>
+        
+        <div class="form-group">
+          <p class="note-text">
+            <strong>Note:</strong> This image will be stored securely and will only be used for verification purposes. 
+            The image will be visible in your request details for reference.
+          </p>
+        </div>
+      </div>
+
+      <!-- Request Details Section -->
+      <div class="form-section">
+        <h3 class="section-title">Request Details</h3>
+        
+        <div class="form-group">
+          <label>Purpose of Request <span style="color: var(--brand)">*</span></label>
+          <textarea name="purpose" required placeholder="Please specify the purpose of this certificate of indigency (e.g., Scholarship Application, Medical Assistance, Government Program, etc.)"></textarea>
+        </div>
+      </div>
+
+      <!-- Price Display -->
+      <div class="price-display">
+        <div class="price-label">Processing Fee</div>
+        <div class="price-amount">₱20.00</div>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <a href="{% url 'certificates:document_request' %}" class="btn-cancel">Cancel</a>
+      <button type="submit" class="btn-submit">Proceed to Payment</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<style>
+  .messages-container {
+    margin-bottom: 12px;
+  }
+  
+  .message {
+    background: rgba(239,68,68,0.12);
+    border: 1px solid rgba(239,68,68,0.35);
+    color: #fecaca;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+  }
+  
+  .alert-success {
+    background: rgba(16,185,129,0.12);
+    border-color: rgba(16,185,129,0.35);
+    color: #a7f3d0;
+  }
+  
+  .alert-info {
+    background: rgba(59,130,246,0.12);
+    border-color: rgba(59,130,246,0.35);
+    color: #bfdbfe;
+  }
+  
+  .alert-warning {
+    background: rgba(245,158,11,0.12);
+    border-color: rgba(245,158,11,0.35);
+    color: #fde68a;
+  }
+  
+  .note-text {
+    color: #9ca3af;
+    font-size: 14px;
+    margin-top: 8px;
+  }
+</style>
+{% endblock %}
