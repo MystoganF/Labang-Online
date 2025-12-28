@@ -24,6 +24,11 @@ urlpatterns = [
     path('edit-profile/', views.edit_profile, name='edit_profile'),
     path('complete-profile/', views.complete_profile, name='complete_profile'),
     
+    # Profile update endpoints
+    path('update-basic-info/', views.update_basic_info, name='update_basic_info'),
+    path('update-profile-photo/', views.update_profile_photo, name='update_profile_photo'),
+    path('update-resident-id/', views.update_resident_id, name='update_resident_id'),
+    
     # -------------------- CHATBOT --------------------
     path('chatbot-api/', views.chatbot_api, name='chatbot_api'),
 ]

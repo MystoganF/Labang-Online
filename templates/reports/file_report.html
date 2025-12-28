@@ -4,28 +4,29 @@
 {% block title %}File Report - LabangOnline{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/pages/forms.css' %}" />
+
 <link rel="stylesheet" href="{% static 'css/pages/file_report.css' %}" />
 {% endblock %}
 
 {% block page_title %}File Report{% endblock %}
 
 {% block content %}
-<div class="content-wrapper">
+
   <div class="content-right">
-    {% if messages %}
-    <div class="messages">
-      {% for message in messages %}
-        {% if message.tags == 'success' %}
-          <div class="msg success">{{ message }}</div>
-        {% elif message.tags == 'error' %}
-          <div class="msg error">{{ message }}</div>
-        {% endif %}
-      {% endfor %}
-    </div>
-    {% endif %}
-    
     <div class="report-container">
+    
+      {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+          {% if message.tags == 'success' %}
+            <div class="msg success">{{ message }}</div>
+          {% elif message.tags == 'error' %}
+            <div class="msg error">{{ message }}</div>
+          {% endif %}
+        {% endfor %}
+      </div>
+      {% endif %}
+      
       <!-- Report Header -->
       <div class="report-header">
         <h2>Submit New Report</h2>
@@ -81,16 +82,8 @@
           <button type="submit" class="btn-submit">Submit Report</button>
         </div>
       </form>
-
-      <!-- Support Info -->
-      <div class="support">
-        Need help? Contact support at 
-        <a href="mailto:labangon@gmail.com">labangon@company.com</a>
-        or call 
-        <a href="tel:+15551234567">(090) 123-4567</a>
-      </div>
     </div>
-  </div>
+  
 </div>
 {% endblock %}
 

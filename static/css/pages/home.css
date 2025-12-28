@@ -7,8 +7,10 @@
   font-size: 44px;
   margin: 0 0 12px;
   line-height: 1.2;
-  text-shadow: 0 2px 12px rgba(16, 185, 129, 0.15), 0 6px 28px rgba(0,0,0,0.35);
-  transition: transform 240ms ease, text-shadow 240ms ease, letter-spacing 240ms ease;
+  text-shadow: 0 2px 12px rgba(16, 185, 129, 0.15),
+    0 6px 28px rgba(0, 0, 0, 0.35);
+  transition: transform 240ms ease, text-shadow 240ms ease,
+    letter-spacing 240ms ease;
 }
 .hero p {
   font-size: 18px;
@@ -60,17 +62,31 @@
   border: 1px solid var(--border);
   box-shadow: 0 12px 32px var(--shadow);
   will-change: transform, box-shadow;
-  transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
+  transition: transform 250ms ease, box-shadow 250ms ease,
+    border-color 250ms ease;
 }
 .action-card:hover {
   transform: translateY(-6px) scale(1.02);
   box-shadow: 0 24px 60px var(--shadow);
   border-color: var(--border-hover);
 }
-.action-text h3 { margin: 0 0 6px; transition: transform 200ms ease, color 200ms ease; }
-.action-text p { margin: 0; color: var(--text-secondary); font-size: 14px; transition: transform 200ms ease, color 200ms ease; }
-.action-card:hover .action-text h3 { transform: translateX(2px); color: var(--text); }
-.action-card:hover .action-text p { transform: translateX(1px); }
+.action-text h3 {
+  margin: 0 0 6px;
+  transition: transform 200ms ease, color 200ms ease;
+}
+.action-text p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+  transition: transform 200ms ease, color 200ms ease;
+}
+.action-card:hover .action-text h3 {
+  transform: translateX(2px);
+  color: var(--text);
+}
+.action-card:hover .action-text p {
+  transform: translateX(1px);
+}
 @media (max-width: 900px) {
   .grid-3,
   .grid-2 {
@@ -84,9 +100,14 @@
   border-radius: 14px;
   padding: 20px;
   box-shadow: 0 10px 30px var(--shadow);
-  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+  transition: transform 220ms ease, box-shadow 220ms ease,
+    border-color 220ms ease;
 }
-.card:hover { transform: translateY(-6px) scale(1.01); box-shadow: 0 22px 64px var(--shadow); border-color: var(--border-hover); }
+.card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 22px 64px var(--shadow);
+  border-color: var(--border-hover);
+}
 .icon {
   width: 28px;
   height: 28px;
@@ -94,7 +115,9 @@
   filter: drop-shadow(0 4px 10px rgba(16, 185, 129, 0.35));
   transition: transform 200ms ease, filter 200ms ease;
 }
-.action-card:hover .icon { transform: translateY(-2px) scale(1.05); }
+.action-card:hover .icon {
+  transform: translateY(-2px) scale(1.05);
+}
 .step {
   display: flex;
   gap: 12px;
@@ -113,12 +136,26 @@
   border-radius: 12px;
   padding: 16px;
   text-align: center;
-  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+  transition: transform 200ms ease, box-shadow 200ms ease,
+    border-color 200ms ease;
 }
-.stat:hover { transform: translateY(-4px); box-shadow: 0 16px 40px var(--shadow); border-color: var(--border-hover); }
-.stat .value, .stat .label { transition: transform 200ms ease, text-shadow 200ms ease; }
-.stat:hover .value { transform: translateY(-1px); text-shadow: 0 2px 12px rgba(0,0,0,0.35); }
-.stat:hover .label { transform: translateY(-1px); text-shadow: 0 2px 8px rgba(0,0,0,0.25); }
+.stat:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px var(--shadow);
+  border-color: var(--border-hover);
+}
+.stat .value,
+.stat .label {
+  transition: transform 200ms ease, text-shadow 200ms ease;
+}
+.stat:hover .value {
+  transform: translateY(-1px);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+.stat:hover .label {
+  transform: translateY(-1px);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
 .stat .value {
   font-size: 24px;
   font-weight: 700;
@@ -135,5 +172,12 @@
 .contact .btn {
   margin-top: 12px;
 }
-.hero:hover h1 { transform: translateY(-3px); letter-spacing: 0.3px; text-shadow: 0 6px 30px rgba(0,0,0,0.45), 0 3px 18px rgba(16,185,129,0.25); }
-.hero:hover p { transform: translateY(-2px); }
+.hero:hover h1 {
+  transform: translateY(-3px);
+  letter-spacing: 0.3px;
+  text-shadow: 0 6px 30px rgba(0, 0, 0, 0.45),
+    0 3px 18px rgba(16, 185, 129, 0.25);
+}
+.hero:hover p {
+  transform: translateY(-2px);
+}

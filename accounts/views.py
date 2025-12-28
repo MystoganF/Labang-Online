@@ -350,7 +350,7 @@ def personal_info(request):
     context = {
         'user': user,
         'unread_count': unread_count,
-        'active_page': 'personal_info',  # Highlights active menu item
+        'active_page': 'personal_info',
     }   
     return render(request, 'accounts/personal_info.html', context)
 
@@ -358,90 +358,133 @@ def personal_info(request):
 @login_required(login_url='accounts:login')
 @never_cache
 def edit_profile(request):
-    """Edit user profile"""
+    """View edit profile page (GET only - displays the form)"""
     user = request.user
     
-    # Import here to avoid circular dependency
     from announcements.models import Announcement
     unread_count = Announcement.objects.filter(is_active=True).count()
-
-    if request.method == 'POST':
-        save_ok = True
-        
-        # Update text fields
-        user.full_name = request.POST.get('full_name', user.full_name)
-        user.contact_number = request.POST.get('contact_number', user.contact_number)
-        user.address_line = request.POST.get('address_line', user.address_line)
-        
-        # Handle username with uniqueness check
-        new_username = request.POST.get('username')
-        if new_username and new_username != user.username:
-            if User.objects.filter(username=new_username).exclude(pk=user.pk).exists():
-                messages.error(request, "Username already taken. Please choose another.")
-                save_ok = False
-            else:
-                user.username = new_username
-        
-        # Handle date_of_birth
-        date_of_birth = request.POST.get('date_of_birth')
-        if date_of_birth:
-            user.date_of_birth = date_of_birth
-            
-        # Handle civil_status
-        civil_status = request.POST.get('civil_status')
-        if civil_status:
-            user.civil_status = civil_status
-
-        # Handle file uploads to Supabase Storage
-        from accounts.storage_utils import upload_to_supabase, delete_from_supabase
-        
-        profile_photo = request.FILES.get('profile_photo')
-        if profile_photo:
-            if user.profile_photo_url:
-                delete_from_supabase(user.profile_photo_url, bucket_name='user-uploads')
-            
-            new_url = upload_to_supabase(
-                profile_photo, 
-                bucket_name='user-uploads',
-                folder='profile-photos'
-            )
-            
-            if new_url:
-                user.profile_photo_url = new_url
-            else:
-                messages.error(request, "Failed to upload profile photo. Please try again.")
-                save_ok = False
-
-        resident_id_photo = request.FILES.get('resident_id_photo')
-        if resident_id_photo:
-            if user.resident_id_photo_url:
-                delete_from_supabase(user.resident_id_photo_url, bucket_name='user-uploads')
-            
-            new_url = upload_to_supabase(
-                resident_id_photo, 
-                bucket_name='user-uploads',
-                folder='resident-ids'
-            )
-            
-            if new_url:
-                user.resident_id_photo_url = new_url
-            else:
-                messages.error(request, "Failed to upload resident ID photo. Please try again.")
-                save_ok = False
-
-        if save_ok:
-            user.save()
-            messages.success(request, "Profile updated successfully!")
-            return redirect('accounts:personal_info')
-        else:
-            context = {'user': user}
-            return render(request, 'accounts/edit_profile.html', context)
 
     context = {
         'user': user,
         'unread_count': unread_count,
+        'active_page': 'personal_info',
     }
     return render(request, 'accounts/edit_profile.html', context)
+
+
+@login_required(login_url='accounts:login')
+@never_cache
+def update_basic_info(request):
+    """Update basic user information (text fields only)"""
+    if request.method != 'POST':
+        return redirect('accounts:edit_profile')
+    
+    user = request.user
+    save_ok = True
+    
+    # Update text fields
+    user.full_name = request.POST.get('full_name', user.full_name)
+    user.contact_number = request.POST.get('contact_number', user.contact_number)
+    user.address_line = request.POST.get('address_line', user.address_line)
+    
+    # Handle username with uniqueness check
+    new_username = request.POST.get('username')
+    if new_username and new_username != user.username:
+        if User.objects.filter(username=new_username).exclude(pk=user.pk).exists():
+            messages.error(request, "Username already taken. Please choose another.")
+            save_ok = False
+        else:
+            user.username = new_username
+    
+    # Handle date_of_birth
+    date_of_birth = request.POST.get('date_of_birth')
+    if date_of_birth:
+        user.date_of_birth = date_of_birth
+        
+    # Handle civil_status
+    civil_status = request.POST.get('civil_status')
+    if civil_status:
+        user.civil_status = civil_status
+    
+    if save_ok:
+        user.save()
+        messages.success(request, "Basic information updated successfully!")
+    
+    return redirect('accounts:edit_profile')
+
+
+@login_required(login_url='accounts:login')
+@never_cache
+def update_profile_photo(request):
+    """Update user profile photo"""
+    if request.method != 'POST':
+        return redirect('accounts:edit_profile')
+    
+    user = request.user
+    profile_photo = request.FILES.get('profile_photo')
+    
+    if not profile_photo:
+        messages.warning(request, "No profile photo selected.")
+        return redirect('accounts:edit_profile')
+    
+    from accounts.storage_utils import upload_to_supabase, delete_from_supabase
+    
+    # Delete old photo if exists
+    if user.profile_photo_url:
+        delete_from_supabase(user.profile_photo_url, bucket_name='user-uploads')
+    
+    # Upload new photo
+    new_url = upload_to_supabase(
+        profile_photo, 
+        bucket_name='user-uploads',
+        folder='profile-photos'
+    )
+    
+    if new_url:
+        user.profile_photo_url = new_url
+        user.save()
+        messages.success(request, "Profile photo updated successfully!")
+    else:
+        messages.error(request, "Failed to upload profile photo. Please try again.")
+    
+    return redirect('accounts:edit_profile')
+
+
+@login_required(login_url='accounts:login')
+@never_cache
+def update_resident_id(request):
+    """Update resident ID photo"""
+    if request.method != 'POST':
+        return redirect('accounts:edit_profile')
+    
+    user = request.user
+    resident_id_photo = request.FILES.get('resident_id_photo')
+    
+    if not resident_id_photo:
+        messages.warning(request, "No resident ID photo selected.")
+        return redirect('accounts:edit_profile')
+    
+    from accounts.storage_utils import upload_to_supabase, delete_from_supabase
+    
+    # Delete old resident ID if exists
+    if user.resident_id_photo_url:
+        delete_from_supabase(user.resident_id_photo_url, bucket_name='user-uploads')
+    
+    # Upload new resident ID
+    new_url = upload_to_supabase(
+        resident_id_photo, 
+        bucket_name='user-uploads',
+        folder='resident-ids'
+    )
+    
+    if new_url:
+        user.resident_id_photo_url = new_url
+        user.save()
+        messages.success(request, "Resident ID photo updated successfully!")
+    else:
+        messages.error(request, "Failed to upload resident ID photo. Please try again.")
+    
+    return redirect('accounts:edit_profile')
 
 
 @login_required(login_url='accounts:login')

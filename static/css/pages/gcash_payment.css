@@ -1,31 +1,45 @@
-/* Extracted from templates/accounts/gcash_payment.html */
+/* GCash Payment - Fixed scrolling and layout */
+
+/* Override the dashboard.css overflow restrictions */
 html, body {
-  overflow: hidden;
-  height: 100%;
+  overflow: visible !important;
+  height: auto !important;
+  min-height: 100% !important;
   margin: 0;
   padding: 0;
 }
 
 .dashboard-wrapper {
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh !important;
+  height: auto !important;
+  overflow: visible !important;
   display: flex;
 }
 
 .main-content {
   flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: 100vh;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  min-height: 100vh !important;
+  height: auto !important;
   display: flex;
   flex-direction: column;
 }
 
+/* Remove fixed height from content-wrapper */
+.content-wrapper {
+  height: auto !important;
+  min-height: auto !important;
+  overflow: visible !important;
+  flex: 1 !important;
+}
+
 .payment-container {
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 24px;
   padding-bottom: 60px;
+  width: 100%;
 }
 
 .page-header {
@@ -187,18 +201,6 @@ html, body {
   color: #10b981;
 }
 
-@media (max-width: 640px) {
-  .qr-code-wrapper img {
-    width: 220px;
-    height: 220px;
-  }
-  .amount-display {
-    position: static;
-    margin-top: 16px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-  }
-}
-
 /* Reference Number Form */
 .reference-form {
   background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
@@ -297,8 +299,12 @@ html, body {
 }
 
 .warning-icon {
-  color: var(--text-secondary);
+  color: #9ca3af;
   flex-shrink: 0;
+}
+
+.light .warning-icon {
+  color: #64748b;
 }
 
 .warning-content p {
@@ -335,6 +341,12 @@ html, body {
 .btn-submit:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+.btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
 }
 
 .btn-back {
@@ -407,4 +419,69 @@ html, body {
 
 .light .info-value {
   color: #1e293b;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .payment-container {
+    padding: 16px;
+    padding-bottom: 40px;
+  }
+
+  .page-header h1 {
+    font-size: 24px;
+  }
+
+  .qr-section {
+    padding: 24px;
+  }
+
+  .qr-code-wrapper img {
+    width: 220px;
+    height: 220px;
+  }
+
+  .amount-display {
+    position: static;
+    margin-top: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  }
+
+  .reference-form {
+    padding: 24px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn-submit,
+  .btn-back {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-container {
+    padding: 12px;
+    padding-bottom: 32px;
+  }
+
+  .qr-code-wrapper {
+    padding: 16px;
+  }
+
+  .qr-code-wrapper img {
+    width: 180px;
+    height: 180px;
+  }
+
+  .amount-value {
+    font-size: 24px;
+  }
+
+  .instructions-card,
+  .reference-form {
+    padding: 16px;
+  }
 }

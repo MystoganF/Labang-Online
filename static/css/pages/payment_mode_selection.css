@@ -1,31 +1,45 @@
-/* Extracted from templates/accounts/payment_mode_selection.html */
+/* Payment Mode Selection - Fixed scrolling and layout */
+
+/* Override the dashboard.css overflow restrictions */
 html, body {
-    overflow: hidden;
-    height: 100%;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 100% !important;
     margin: 0;
     padding: 0;
 }
 
 .dashboard-wrapper {
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh !important;
+    height: auto !important;
+    overflow: visible !important;
     display: flex;
 }
 
 .main-content {
     flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 100vh;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    min-height: 100vh !important;
+    height: auto !important;
     display: flex;
     flex-direction: column;
 }
 
+/* Remove fixed height from content-wrapper */
+.content-wrapper {
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    flex: 1 !important;
+}
+
 .payment-container {
-    max-width: 900px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 24px;
     padding-bottom: 60px;
+    width: 100%;
 }
 
 .page-header {
@@ -330,4 +344,44 @@ html, body {
 
 .hidden-input {
     display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .payment-container {
+        padding: 16px;
+        padding-bottom: 40px;
+    }
+
+    .page-header h1 {
+        font-size: 24px;
+    }
+
+    .payment-options {
+        grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-continue,
+    .btn-back {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .payment-container {
+        padding: 12px;
+        padding-bottom: 32px;
+    }
+
+    .summary-card {
+        padding: 16px;
+    }
+
+    .payment-option {
+        padding: 24px;
+    }
 }
