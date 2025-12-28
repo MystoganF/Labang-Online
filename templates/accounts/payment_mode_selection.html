@@ -9,344 +9,11 @@
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'css/pages/payment_mode_selection.css' %}">
     <link rel="icon" href="{% static 'logo.png' %}" type="image/png" />
-    <!-- <style>
-        html, body {
-            overflow: hidden;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
-        .dashboard-wrapper {
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-        }
-
-        .main-content {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .payment-container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 24px;
-            padding-bottom: 60px;
-        }
-
-        .page-header {
-            margin-bottom: 32px;
-        }
-
-        .page-header h1 {
-            font-size: 32px;
-            font-weight: 600;
-            color: #e5e7eb;
-            margin: 0 0 8px 0;
-        }
-
-        .light .page-header h1 {
-            color: #111827;
-        }
-
-        .page-header p {
-            color: #9ca3af;
-            font-size: 15px;
-            margin: 0;
-        }
-
-        .light .page-header p {
-            color: #374151;
-        }
-
-        /* Request Summary Card */
-        .summary-card {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 32px;
-        }
-
-        .light .summary-card {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .summary-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #e5e7eb;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .light .summary-title {
-            color: #111827;
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-        }
-
-        .summary-row:last-child {
-            border-bottom: none;
-            padding-top: 16px;
-            margin-top: 8px;
-            border-top: 2px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .summary-label {
-            color: #94a3b8;
-            font-size: 14px;
-        }
-
-        .light .summary-label {
-            color: #64748b;
-        }
-
-        .summary-value {
-            color: #e5e7eb;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .light .summary-value {
-            color: #1e293b;
-        }
-
-        .summary-row:last-child .summary-value {
-            color: #10b981;
-            font-size: 24px;
-            font-weight: 700;
-        }
-
-        /* Payment Options */
-        .payment-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-            margin-bottom: 32px;
-        }
-
-        .payment-option {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border: 2px solid rgba(148, 163, 184, 0.2);
-            border-radius: 16px;
-            padding: 32px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .light .payment-option {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border: 2px solid rgba(148, 163, 184, 0.3);
-        }
-
-        .payment-option:hover {
-            transform: translateY(-4px);
-            border-color: rgba(16, 185, 129, 0.5);
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.2);
-        }
-
-        .payment-option.selected {
-            border-color: #10b981;
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
-        }
-
-        .payment-option.selected::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-      background: linear-gradient(90deg, #10b981 0%, #10b981 100%);
-        }
-
-        .payment-icon-wrapper {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            transition: all 0.3s ease;
-        }
-
-        .light .payment-icon-wrapper {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.1) 100%);
-        }
-
-        .payment-option:hover .payment-icon-wrapper,
-        .payment-option.selected .payment-icon-wrapper {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(16, 185, 129, 0.2) 100%);
-            transform: scale(1.1);
-        }
-
-        .payment-icon-wrapper svg {
-            width: 40px;
-            height: 40px;
-            color: #10b981;
-        }
-
-        .payment-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #e5e7eb;
-            text-align: center;
-            margin-bottom: 12px;
-        }
-
-        .light .payment-title {
-            color: #111827;
-        }
-
-        .payment-description {
-            font-size: 14px;
-            color: #9ca3af;
-            text-align: center;
-            line-height: 1.6;
-            margin-bottom: 16px;
-        }
-
-        .light .payment-description {
-            color: #64748b;
-        }
-
-        .payment-features {
-            list-style: none;
-            padding: 0;
-            margin: 16px 0 0 0;
-        }
-
-        .payment-features li {
-            font-size: 13px;
-            color: #cbd5e1;
-            padding: 8px 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .light .payment-features li {
-            color: #475569;
-        }
-
-        .payment-features li::before {
-            content: '✓';
-            color: #10b981;
-            font-weight: 600;
-            font-size: 16px;
-        }
-
-        .radio-indicator {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 24px;
-            height: 24px;
-            border: 2px solid rgba(148, 163, 184, 0.3);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .payment-option.selected .radio-indicator {
-            border-color: #10b981;
-            background: #10b981;
-        }
-
-        .payment-option.selected .radio-indicator::after {
-            content: '';
-            width: 8px;
-            height: 8px;
-            background: white;
-            border-radius: 50%;
-        }
-
-        /* Form Actions */
-        .form-actions {
-            display: flex;
-            gap: 16px;
-        }
-
-        .btn-continue {
-            flex: 1;
-            padding: 16px 32px;
-      background: linear-gradient(135deg, #10b981 0%, #10b981 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
-
-        .btn-continue:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
-        }
-
-        .btn-continue:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .btn-back {
-            padding: 16px 32px;
-            background: rgba(148, 163, 184, 0.1);
-            color: #cbd5e1;
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .light .btn-back {
-            background: white;
-            color: #475569;
-            border-color: #cbd5e1;
-        }
-
-        .btn-back:hover {
-            background: rgba(148, 163, 184, 0.2);
-        }
-
-        .light .btn-back:hover {
-            background: #f1f5f9;
-        }
-
-        .hidden-input {
-            display: none;
-        }
-    </style> -->
+    
 </head>
 <body>
     <div class="dashboard-wrapper">
-        <!-- Sidebar -->
+      
         <aside class="sidebar">
             <a href="/" aria-label="Home">
                 <div class="logo">
@@ -355,7 +22,6 @@
                 </div>
             </a>
 
-              <!-- Notification with badge -->
         <div
           class="notification-item"
           onclick="window.location.href='{% url 'accounts:announcements' %}'"
@@ -387,9 +53,8 @@
           </li>
       </aside>
 
-        <!-- Main Content -->
         <main class="main-content">
-            <!-- Top bar -->
+            
             <header class="topbar">
                 <span></span>
                 <button id="mode-toggle" class="btn">Toggle</button>
@@ -407,13 +72,13 @@
             </header>
 
             <div class="payment-container">
-                <!-- Page Header -->
+               
                 <div class="page-header">
                     <h1>Select Payment Mode</h1>
                     <p>Choose how you'd like to pay for your certificate request</p>
                 </div>
 
-                <!-- Request Summary -->
+           
                 <div class="summary-card">
                     <h3 class="summary-title">Request Summary</h3>
                     <div class="summary-row">
@@ -430,13 +95,12 @@
                     </div>
                 </div>
 
-                <!-- Payment Options Form -->
                 <form method="POST" id="paymentForm">
                     {% csrf_token %}
                     <input type="hidden" name="payment_mode" id="paymentModeInput" value="">
 
                     <div class="payment-options">
-                        <!-- GCash Option -->
+                      
                         <div class="payment-option" onclick="selectPayment('gcash')">
                             <div class="radio-indicator"></div>
                             <div class="payment-icon-wrapper">
@@ -453,7 +117,7 @@
                             </ul>
                         </div>
 
-                        <!-- Counter Option -->
+                   
                         <div class="payment-option" onclick="selectPayment('counter')">
                             <div class="radio-indicator"></div>
                             <div class="payment-icon-wrapper">
@@ -471,7 +135,6 @@
                         </div>
                     </div>
 
-                    <!-- Form Actions -->
                     <div class="form-actions">
                         <a href="{% url 'accounts:document_request' %}" class="btn-back">Pay Later</a>
                         <button type="submit" class="btn-continue" id="continueBtn" disabled>Continue to Payment</button>
@@ -486,21 +149,21 @@
         let selectedMode = null;
 
         function selectPayment(mode) {
-            // Remove selected class from all options
+         
             document.querySelectorAll('.payment-option').forEach(opt => {
                 opt.classList.remove('selected');
             });
 
-            // Add selected class to clicked option
+           
             event.currentTarget.classList.add('selected');
 
-            // Update hidden input and enable continue button
+        
             selectedMode = mode;
             document.getElementById('paymentModeInput').value = mode;
             document.getElementById('continueBtn').disabled = false;
         }
 
-        // Prevent form submission if no mode selected
+        
         document.getElementById('paymentForm').addEventListener('submit', function(e) {
             if (!selectedMode) {
                 e.preventDefault();

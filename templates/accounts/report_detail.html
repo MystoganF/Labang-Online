@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="{% static 'css/app.css' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <link rel="icon" href="{% static 'logo.png' %}" type="image/png" />
-    <link rel="stylesheet" href="{% static 'css/pages/request_detail.css' %}">
-    <!-- Using request_detail.css for consistent styling -->
+    <link rel="stylesheet" href="{% static 'css/pages/report_detail.css' %}">
+
 </head>
 <body>
     <div class="dashboard-wrapper">
-        <!-- Sidebar -->
+      
         <aside class="sidebar">
             <a href="/" aria-label="Home">
                 <div class="logo">
@@ -23,7 +23,7 @@
                 </div>
             </a>
 
-            <!-- Notification with badge -->
+            
             <div
           class="notification-item"
           onclick="window.location.href='{% url 'accounts:announcements' %}'"
@@ -55,7 +55,7 @@
             </ul>
         </aside>
 
-        <!-- Main Content -->
+        
         <main class="main-content">
             <header class="topbar">
                 <span></span>

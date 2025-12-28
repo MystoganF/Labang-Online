@@ -10,282 +10,17 @@
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
     <link rel="icon" href="{% static 'logo.png' %}" type="image/png" />
     <link rel="stylesheet" href="{% static 'css/pages/personal_info.css' %}" />
-    <!-- inline styles moved to static/css/pages/personal_info.css -->
-    <!--
-      /* Fix scrolling issues */
-      html,
-      body {
-        overflow: hidden;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-
-      .dashboard-wrapper {
-        height: 100vh;
-        overflow: hidden;
-        display: flex;
-      }
-
-      .main-content {
-        flex: 1;
-        overflow-y: auto;
-        overflow-x: hidden;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .content-wrapper {
-        flex: 1;
-        display: flex;
-        padding: 20px;
-        gap: 20px;
-        overflow: hidden;
-        height: 100%;
-      }
-
-      /* Left column - User info (transparent to show pure black bg) */
-      .content-left {
-        flex: 1;
-        background: transparent;
-        border-radius: 0;
-        padding: 24px;
-        overflow-y: auto;
-        max-height: 100%;
-      }
-
-      /* Right column - Action area (transparent like Document Request) */
-      .content-right {
-        width: 300px;
-        background: transparent;
-        border: none;
-        border-radius: 0;
-        padding: 24px 0;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        overflow-y: auto;
-        max-height: 100%;
-      }
-
-      /* Enhanced profile photo styling */
-      .user-profile img {
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid #10b981;
-        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-      }
-
-      .user-header img {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 4px solid #10b981;
-        box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-      }
-
-      .user-header img:hover {
-        transform: scale(1.05);
-        box-shadow: 0 6px 24px rgba(16, 185, 129, 0.6);
-      }
-
-      .user-header {
-        display: flex;
-        align-items: center;
-        gap: 24px;
-        padding: 24px;
-        background: linear-gradient(
-          135deg,
-          rgba(16, 185, 129, 0.1) 0%,
-          rgba(16, 185, 129, 0.05) 100%
-        );
-        border-radius: 16px;
-        margin-bottom: 24px;
-        border: 1px solid rgba(16, 185, 129, 0.2);
-      }
-
-      .user-name h2 {
-        margin: 0 0 8px 0;
-        font-size: 28px;
-        font-weight: 600;
-        color: #e5e7eb;
-      }
-
-      /* Light mode - user name needs strong contrast */
-      .light .user-name h2 {
-        color: #111827 !important;
-        font-weight: 700;
-      }
-
-      .role {
-        display: inline-block;
-        padding: 6px 16px;
-      background: linear-gradient(135deg, #10b981 0%, #10b981 100%);
-        color: white;
-        border-radius: 20px;
-        font-size: 13px;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-      }
-
-      .role.pending {
-        background: linear-gradient(135deg, #1e293b 0%, #1e293b 100%);
-      }
-
-      /* Resident ID Card Styling */
-      .resident-id-container {
-        position: relative;
-        overflow: hidden;
-        border-radius: 16px;
-        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-        padding: 20px;
-        border: 1px solid rgba(16, 185, 129, 0.3);
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-      }
-
-      .resident-id-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 300px;
-      }
-
-      .resident-id-container img {
-        max-width: 100%;
-        max-height: 600px;
-        width: auto;
-        height: auto;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-        transition: transform 0.3s ease;
-        object-fit: contain;
-        display: block;
-        margin: 0 auto;
-      }
-
-      .resident-id-container img:hover {
-        transform: scale(1.02);
-      }
-
-      .id-placeholder {
-        padding: 60px 20px;
-        text-align: center;
-        color: #64748b;
-        background: rgba(15, 23, 32, 0.5);
-        border-radius: 12px;
-        border: 2px dashed rgba(100, 116, 139, 0.3);
-      }
-
-      .id-placeholder img {
-        opacity: 0.3;
-        height: 80px;
-        margin-bottom: 16px;
-        filter: grayscale(100%);
-        max-width: 100%;
-        width: auto;
-        object-fit: contain;
-      }
-
-      /* Light mode overrides for Resident ID section */
-      .light .resident-id-container {
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-        border: 1px solid rgba(148, 163, 184, 0.3);
-        box-shadow: 0 4px 12px rgba(17, 24, 39, 0.06);
-      }
-
-      .light .resident-id-container img {
-        box-shadow: 0 4px 12px rgba(17, 24, 39, 0.08);
-      }
-
-      .light .id-placeholder {
-        background: rgba(148, 163, 184, 0.15);
-        border: 2px dashed rgba(148, 163, 184, 0.35);
-        color: #475569;
-      }
-
-      .light .id-placeholder img {
-        opacity: 0.5;
-        filter: grayscale(0%);
-      }
-
-      .id-placeholder p {
-        margin: 0;
-        font-size: 14px;
-      }
-
-      /* Ensure info sections have proper spacing */
-      .info-section {
-        margin-bottom: 24px;
-      }
-
-      .info-section:last-child {
-        margin-bottom: 60px;
-      }
-
-      /* Make menu items clickable links */
-      .sidebar .menu-item a {
-        text-decoration: none;
-        color: inherit;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        width: 100%;
-      }
-
-      /* Optional: Add distinct styling for admin button */
-      .action-btn.admin-btn {
-        background: linear-gradient(135deg, #10b981 0%, #10b981 100%);
-        margin-top: 15px;
-      }
-
-      .action-btn.admin-btn:hover {
-        background: linear-gradient(135deg, #10b981 0%, #10b981 100%);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-      }
-
-      /* Admin role badge styling */
-      .role.admin {
-        background: linear-gradient(135deg, #10b981 0%, #10b981 100%);
-        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-      }
-
-      /* Super admin overrides: switch blue to green theme */
-      .super-admin .action-btn.admin-btn {
-        background: linear-gradient(135deg, #10b981 0%, #10b981 100%);
-        color: #fff;
-        border: none;
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
-      }
-
-      .super-admin .action-btn.admin-btn:hover {
-        background: linear-gradient(135deg, #10b981 0%, #10b981 100%);
-        box-shadow: 0 6px 18px rgba(16, 185, 129, 0.45);
-      }
-
-      .super-admin .role.admin {
-        background: linear-gradient(135deg, #10b981 0%, #10b981 100%);
-        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-      }
-    -->
+    
   </head>
   <body class="{% if user.is_superuser %}super-admin{% endif %}">
     <div class="dashboard-wrapper">
-      <!-- Sidebar -->
+   
       <aside class="sidebar">
         <a class="logo" href="/">
           <img src="{% static 'logo.png' %}" alt="Labang Logo" />
           <span>LabangOnline</span>
         </a>
 
-        <!-- Notification with badge -->
         <div
           class="notification-item"
           onclick="window.location.href='{% url 'accounts:announcements' %}'"
@@ -329,9 +64,9 @@
         </ul>
       </aside>
 
-      <!-- Main Content -->
+    
       <main class="main-content">
-        <!-- Top bar -->
+        
         <header class="topbar">
           <span></span>
           <button id="mode-toggle" class="btn">Toggle</button>
@@ -345,7 +80,7 @@
             />
             {% endif %}
             <span>{{ user.full_name }}</span>
-            <!-- Updated Logout Button -->
+          
             <form method="get" action="{% url 'accounts:logout_confirm' %}">
               <button type="submit" class="btn-logout">LOGOUT</button>
             </form>
@@ -361,7 +96,7 @@
         {% endif %}
 
         <div class="content-wrapper">
-          <!-- Left: User Information -->
+  
           <div class="content-left">
             <div class="user-header">
               {% if user.profile_photo_url %}
@@ -455,7 +190,7 @@
             </div>
           </div>
 
-          <!-- Right: Action Buttons -->
+         
           <div class="content-right">
             <a href="{% url 'accounts:edit_profile' %}" class="action-btn"
               >EDIT INFORMATION</a

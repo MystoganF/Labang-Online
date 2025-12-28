@@ -9,421 +9,11 @@
     <link rel="stylesheet" href="{% static 'css/app.css' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'css/pages/gcash_payment.css' %}">
-    <!-- <style>
-        html, body {
-            overflow: hidden;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
-        .dashboard-wrapper {
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-        }
-
-        .main-content {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .payment-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 24px;
-            padding-bottom: 60px;
-        }
-
-        .page-header {
-            margin-bottom: 32px;
-        }
-
-        .page-header h1 {
-            font-size: 32px;
-            font-weight: 600;
-            color: #e5e7eb;
-            margin: 0 0 8px 0;
-        }
-
-        .light .page-header h1 {
-            color: #111827;
-        }
-
-        .page-header p {
-            color: #9ca3af;
-            font-size: 15px;
-            margin: 0;
-        }
-
-        .light .page-header p {
-            color: #374151;
-        }
-
-        /* Payment Instructions (green theme) */
-        .instructions-card {
-            background: rgba(16, 185, 129, 0.08);
-            border: 1px solid rgba(16, 185, 129, 0.25);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 32px;
-        }
-
-        .instructions-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #10b981;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .instructions-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .instructions-list li {
-            color: #cbd5e1;
-            font-size: 14px;
-            padding: 10px 0;
-            display: flex;
-            gap: 12px;
-            line-height: 1.6;
-        }
-
-        .light .instructions-list li {
-            color: #475569;
-        }
-
-        .step-number {
-            flex-shrink: 0;
-            width: 28px;
-            height: 28px;
-      background: linear-gradient(135deg, #10b981 0%, #10b981 100%);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 14px;
-            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35);
-        }
-
-        /* QR Code Section */
-        .qr-section {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: 16px;
-            padding: 32px;
-            text-align: center;
-            margin-bottom: 32px;
-            position: relative; /* allow amount badge to anchor bottom-right */
-        }
-
-        .light .qr-section {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .qr-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #e5e7eb;
-            margin-bottom: 8px;
-        }
-
-        .light .qr-title {
-            color: #111827;
-        }
-
-        .qr-subtitle {
-            font-size: 14px;
-            color: #9ca3af;
-            margin-bottom: 24px;
-        }
-
-        .light .qr-subtitle {
-            color: #64748b;
-        }
-
-        .qr-code-wrapper {
-            background: white;
-            padding: 24px;
-            border-radius: 16px;
-            display: inline-block;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .qr-code-wrapper img {
-            display: block;
-            width: 280px;
-            height: 280px;
-        }
-
-        .amount-display {
-            background: rgba(16, 185, 129, 0.12);
-            border: 1px solid rgba(16, 185, 129, 0.35);
-            border-radius: 12px;
-            padding: 16px 24px;
-            display: inline-block;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-            position: absolute;
-            right: 24px;
-            bottom: 24px;
-            margin-top: 0;
-        }
-
-        .amount-label {
-            font-size: 14px;
-            color: #9ca3af;
-            margin-bottom: 4px;
-        }
-
-        .light .amount-label {
-            color: #64748b;
-        }
-
-        .amount-value {
-            font-size: 32px;
-            font-weight: 700;
-            color: #10b981;
-        }
-
-        @media (max-width: 640px) {
-            .qr-code-wrapper img {
-                width: 220px;
-                height: 220px;
-            }
-            .amount-display {
-                position: static;
-                margin-top: 16px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-            }
-        }
-
-        /* Reference Number Form */
-        .reference-form {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: 16px;
-            padding: 32px;
-            margin-bottom: 32px;
-        }
-
-        .light .reference-form {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .form-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #e5e7eb;
-            margin-bottom: 8px;
-        }
-
-        .light .form-title {
-            color: #111827;
-        }
-
-        .form-subtitle {
-            font-size: 14px;
-            color: #9ca3af;
-            margin-bottom: 24px;
-        }
-
-        .light .form-subtitle {
-            color: #64748b;
-        }
-
-        .form-group {
-            margin-bottom: 24px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 14px;
-            font-weight: 500;
-            color: #cbd5e1;
-            margin-bottom: 8px;
-        }
-
-        .light .form-group label {
-            color: #1e293b;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 14px 16px;
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            border-radius: 8px;
-            color: #e5e7eb;
-            font-size: 15px;
-            font-family: monospace;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-        }
-
-        .light .form-group input {
-            background: white;
-            border: 1px solid #cbd5e1;
-            color: #1e293b;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #10b981;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-        }
-
-        .input-hint {
-            font-size: 13px;
-            color: #9ca3af;
-            margin-top: 6px;
-        }
-
-        .light .input-hint {
-            color: #64748b;
-        }
-
-        /* Warning Box */
-        .warning-box {
-            background: rgba(30, 41, 59, 0.12);
-            border: 1px solid rgba(30, 41, 59, 0.3);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 24px;
-            display: flex;
-            gap: 12px;
-        }
-
-        .warning-icon {
-            color: var(--text-secondary);
-            flex-shrink: 0;
-        }
-
-        .warning-content p {
-            margin: 0;
-            color: #cbd5e1;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .light .warning-content p {
-            color: #475569;
-        }
-
-        /* Form Actions */
-        .form-actions {
-            display: flex;
-            gap: 16px;
-        }
-
-        .btn-submit {
-            flex: 1;
-            padding: 16px 32px;
-      background: linear-gradient(135deg, #10b981 0%, #10b981 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
-
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
-        }
-
-        .btn-back {
-            padding: 16px 32px;
-            background: rgba(148, 163, 184, 0.1);
-            color: #cbd5e1;
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .light .btn-back {
-            background: white;
-            color: #475569;
-            border-color: #cbd5e1;
-        }
-
-        .btn-back:hover {
-            background: rgba(148, 163, 184, 0.2);
-        }
-
-        .light .btn-back:hover {
-            background: #f1f5f9;
-        }
-
-        /* Request Info */
-        .request-info {
-            background: rgba(30, 41, 59, 0.3);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 32px;
-        }
-
-        .light .request-info {
-            background: rgba(241, 245, 249, 0.5);
-            border: 1px solid rgba(203, 213, 225, 0.5);
-        }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-        }
-
-        .info-row:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            font-size: 14px;
-            color: #94a3b8;
-        }
-
-        .light .info-label {
-            color: #64748b;
-        }
-
-        .info-value {
-            font-size: 14px;
-            color: #e5e7eb;
-            font-weight: 500;
-        }
-
-        .light .info-value {
-            color: #1e293b;
-        }
-    </style> -->
+    
 </head>
 <body>
     <div class="dashboard-wrapper">
-        <!-- Sidebar -->
+        
         <aside class="sidebar">
             <a href="/" aria-label="Home">
                 <div class="logo">
@@ -432,7 +22,6 @@
                 </div>
             </a>
 
-              <!-- Notification with badge -->
         <div
           class="notification-item"
           onclick="window.location.href='{% url 'accounts:announcements' %}'"
@@ -464,9 +53,9 @@
           </li>
       </aside>
 
-        <!-- Main Content -->
+       
         <main class="main-content">
-            <!-- Top bar -->
+          
             <header class="topbar">
                 <span></span>
                 <button id="mode-toggle" class="btn">Toggle</button>
@@ -484,13 +73,13 @@
             </header>
 
             <div class="payment-container">
-                <!-- Page Header -->
+            
                 <div class="page-header">
                     <h1>GCash Payment</h1>
                     <p>Complete your payment using GCash</p>
                 </div>
 
-                <!-- Request Info -->
+               
                 <div class="request-info">
                     <div class="info-row">
                         <span class="info-label">Request ID</span>
@@ -502,7 +91,7 @@
                     </div>
                 </div>
 
-                <!-- Payment Instructions -->
+         
                 <div class="instructions-card">
                     <h3 class="instructions-title">
                         <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -534,13 +123,13 @@
                     </ol>
                 </div>
 
-                <!-- QR Code Section -->
+              
                 <div class="qr-section">
                     <h3 class="qr-title">Scan QR Code with GCash</h3>
                     <p class="qr-subtitle">Use your GCash app to scan this QR code</p>
                     
                     <div class="qr-code-wrapper">
-                        <!-- Replace with your actual GCash QR code image -->
+                       
                         <img src="{% static 'images/gcash-qr-code.png' %}" alt="GCash QR Code">
                     </div>
 
@@ -550,7 +139,6 @@
                     </div>
                 </div>
 
-                <!-- Reference Number Form -->
                 <form method="POST">
                     {% csrf_token %}
                     <div class="reference-form">
@@ -580,7 +168,7 @@
                         </div>
                     </div>
 
-                    <!-- Form Actions -->
+                 
                     <div class="form-actions">
                         <a href="{% url 'accounts:payment_mode_selection' cert_request.request_id %}" class="btn-back">Back</a>
                         <button type="submit" class="btn-submit">Submit Payment Reference</button>
