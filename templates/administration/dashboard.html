@@ -299,13 +299,11 @@
                 <p>{{ user.full_name }}</p>
             </div>
             <ul class="sidebar-menu">
-                <li><a href="{% url 'accounts:admin_dashboard' %}"><i>📊</i> Dashboard</a></li>
-                <li><a href="{% url 'accounts:admin_users' %}"><i>👥</i> Users</a></li>
-                <li><a href="{% url 'accounts:admin_certificates' %}"><i>📄</i> Certificates</a></li>
-                <li><a href="{% url 'accounts:admin_reports' %}"><i>📋</i> Reports</a></li>
-                <li><a href="{% url 'accounts:admin_announcements' %}"><i>📢</i> Announcements</a></li>
-                <li><a href="{% url 'accounts:personal_info' %}"><i>🏠</i> User View</a></li>
-                <li><a href="{% url 'accounts:logout_confirm' %}"><i>🚪</i> Logout</a></li>
+<li><a href="{% url 'administration:admin_dashboard' %}"><i>📊</i> Dashboard</a></li>
+<li><a href="{% url 'administration:admin_users' %}"><i>👥</i> Users</a></li>
+<li><a href="{% url 'administration:admin_certificates' %}"><i>📄</i> Certificates</a></li>
+<li><a href="{% url 'administration:admin_reports' %}"><i>📋</i> Reports</a></li>
+<li><a href="{% url 'administration:admin_announcements' %}"><i>📢</i> Announcements</a></li>
             </ul>
         </aside>
 
@@ -407,7 +405,7 @@
             <div class="activity-section">
                 <div class="activity-header">
                     <h2>Recent Certificate Requests</h2>
-                    <a href="{% url 'accounts:admin_certificates' %}" class="view-all-link">View All →</a>
+                    <a href="{% url 'administration:admin_certificates' %}" class="view-all-link">View All →</a>
                 </div>
                 {% if recent_certificates %}
                 <ul class="activity-list">
@@ -433,7 +431,7 @@
             <div class="activity-section">
                 <div class="activity-header">
                     <h2>Recent Incident Reports</h2>
-                    <a href="{% url 'accounts:admin_reports' %}" class="view-all-link">View All →</a>
+                    <a href="{% url 'administration:admin_reports' %}" class="view-all-link">View All →</a>
                 </div>
                 {% if recent_reports %}
                 <ul class="activity-list">
@@ -459,7 +457,7 @@
             <div class="activity-section">
                 <div class="activity-header">
                     <h2>Recent User Registrations</h2>
-                    <a href="{% url 'accounts:admin_users' %}" class="view-all-link">View All →</a>
+                    <a href="{% url 'administration:admin_users' %}" class="view-all-link">View All →</a>
                 </div>
                 {% if recent_users %}
                 <ul class="activity-list">

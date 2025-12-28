@@ -242,6 +242,15 @@
             background: #138496;
         }
 
+        .btn-view {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #5a6268;
+        }
+
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -276,8 +285,10 @@
             background: white;
             padding: 30px;
             border-radius: 10px;
-            max-width: 500px;
+            max-width: 600px;
             width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         .modal-header {
@@ -290,6 +301,26 @@
 
         .modal-body {
             margin-bottom: 20px;
+        }
+
+        .detail-row {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            color: #2c3e50;
         }
 
         .modal-footer {
@@ -353,15 +384,15 @@
                 grid-template-columns: 1fr;
             }
         }
-            .user-type-resident {
-                background-color: #ffe680 !important; /* Yellow */
-                color: #000;
-            }
+        .user-type-resident {
+            background-color: #ffe680 !important; /* Yellow */
+            color: #000;
+        }
 
-            .user-type-admin {
-                background-color: #b6ff7a !important; /* Yellow-green */
-                color: #000;
-            }
+        .user-type-admin {
+            background-color: #b6ff7a !important; /* Yellow-green */
+            color: #000;
+        }
         
     </style>
 </head>
@@ -374,13 +405,11 @@
                 <p>{{ user.full_name }}</p>
             </div>
             <ul class="sidebar-menu">
-                <li><a href="{% url 'accounts:admin_dashboard' %}"><i>📊</i> Dashboard</a></li>
-                <li><a href="{% url 'accounts:admin_users' %}" class="active"><i>👥</i> Users</a></li>
-                <li><a href="{% url 'accounts:admin_certificates' %}"><i>📄</i> Certificates</a></li>
-                <li><a href="{% url 'accounts:admin_reports' %}"><i>📋</i> Reports</a></li>
-                <li><a href="{% url 'accounts:admin_announcements' %}"><i>📢</i> Announcements</a></li>
-                <li><a href="{% url 'accounts:personal_info' %}"><i>🏠</i> User View</a></li>
-                <li><a href="{% url 'accounts:logout_confirm' %}"><i>🚪</i> Logout</a></li>
+                <li><a href="{% url 'administration:admin_dashboard' %}"><i>📊</i> Dashboard</a></li>
+                <li><a href="{% url 'administration:admin_users' %}" class="active"><i>👥</i> Users</a></li>
+                <li><a href="{% url 'administration:admin_certificates' %}"><i>📄</i> Certificates</a></li>
+                <li><a href="{% url 'administration:admin_reports' %}"><i>📋</i> Reports</a></li>
+                <li><a href="{% url 'administration:admin_announcements' %}"><i>📢</i> Announcements</a></li>
             </ul>
         </aside>
 
@@ -418,9 +447,6 @@
                         <thead>
                             <tr>
                                 <th>Username</th>
-                                <th>Full Name</th>
-                                <th>Email</th>
-                                <th>Contact</th>
                                 <th>Verification</th>
                                 <th>User Type</th>
                                 <th>Account Status</th>
@@ -432,9 +458,6 @@
                             {% for usr in users %}
                             <tr>
                                 <td><strong>{{ usr.username }}</strong></td>
-                                <td>{{ usr.full_name }}</td>
-                                <td>{{ usr.email }}</td>
-                                <td>{{ usr.contact_number }}</td>
                                 <td>
                                     {% if usr.resident_confirmation %}
                                     <span class="status-badge status-verified">✓ Verified</span>
@@ -462,6 +485,8 @@
                                 </td>
                                 <td>{{ usr.date_joined|date:"M d, Y" }}</td>
                                 <td>
+                                    <button type="button" onclick="viewUserDetails('{{ usr.username|escapejs }}', '{{ usr.full_name|escapejs }}', '{{ usr.email|escapejs }}', '{{ usr.contact_number|escapejs }}', '{{ usr.resident_confirmation }}', '{{ usr.is_active }}', '{{ usr.is_superuser }}', '{{ usr.date_joined|date:"M d, Y H:i" }}')" class="action-btn btn-view">👁 View</button>
+                                    
                                     {% if not usr.resident_confirmation %}
                                     <button onclick="confirmVerify({{ usr.id }}, '{{ usr.username }}')" class="action-btn btn-verify">✓ Verify</button>
                                     {% endif %}
@@ -486,6 +511,21 @@
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- View User Details Modal -->
+    <div id="viewUserModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>User Details</h2>
+            </div>
+            <div class="modal-body" id="userDetails">
+                <!-- Will be filled by JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="closeViewUserModal()" class="modal-btn modal-btn-cancel">Close</button>
+            </div>
+        </div>
     </div>
 
     <!-- Verify User Modal -->
@@ -556,54 +596,117 @@
 
     <!-- Change User Type Modal -->
     <div id="changeUserTypeModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Change User Type</h2>
-        </div>
-        <div class="modal-body">
-            <p style="font-size: 1.1rem; margin-bottom: 15px;">
-                Are you sure you want to change user <strong id="changeTypeUsername"></strong> to <strong id="changeTypeNewType"></strong>?
-            </p>
-            
-            <div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #17a2b8;">
-                <p id="changeTypeAdminInfo" style="margin: 0; color: #0c5460; font-size: 0.95rem; display: none;">
-                    <strong>ℹ️ Admin Access:</strong> This user will have access to the admin dashboard and management features.
-                </p>
-                <p id="changeTypeResidentInfo" style="margin: 0; color: #856404; font-size: 0.95rem; display: none;">
-                    <strong>ℹ️ Resident Access:</strong> This user will only have access to resident features (no admin dashboard access).
-                </p>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Change User Type</h2>
             </div>
+            <div class="modal-body">
+                <p style="font-size: 1.1rem; margin-bottom: 15px;">
+                    Are you sure you want to change user <strong id="changeTypeUsername"></strong> to <strong id="changeTypeNewType"></strong>?
+                </p>
+                
+                <div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #17a2b8;">
+                    <p id="changeTypeAdminInfo" style="margin: 0; color: #0c5460; font-size: 0.95rem; display: none;">
+                        <strong>ℹ️ Admin Access:</strong> This user will have access to the admin dashboard and management features.
+                    </p>
+                    <p id="changeTypeResidentInfo" style="margin: 0; color: #856404; font-size: 0.95rem; display: none;">
+                        <strong>ℹ️ Resident Access:</strong> This user will only have access to resident features (no admin dashboard access).
+                    </p>
+                </div>
 
-            <div style="margin-top: 25px; text-align: center; font-weight: 600; color: #2c3e50;">
-                Do you want to proceed?
+                <div style="margin-top: 25px; text-align: center; font-weight: 600; color: #2c3e50;">
+                    Do you want to proceed?
+                </div>
             </div>
+            <form method="POST" id="changeUserTypeForm">
+                {% csrf_token %}
+                <input type="hidden" name="user_id" id="changeTypeUserId">
+                <input type="hidden" name="user_type" id="changeTypeValue">
+                <div class="modal-footer" style="justify-content: center; gap: 15px;">
+                    <button type="button" onclick="closeChangeUserTypeModal()" class="modal-btn modal-btn-cancel" style="padding: 12px 35px; font-size: 1rem; min-width: 120px;">
+                        ❌ No
+                    </button>
+                    <button type="submit" class="modal-btn modal-btn-primary" style="padding: 12px 35px; font-size: 1rem; min-width: 120px;">
+                        ✅ Yes
+                    </button>
+                </div>
+            </form>
         </div>
-        <form method="POST" id="changeUserTypeForm">
-            {% csrf_token %}
-            <input type="hidden" name="user_id" id="changeTypeUserId">
-            <input type="hidden" name="user_type" id="changeTypeValue">
-            <div class="modal-footer" style="justify-content: center; gap: 15px;">
-                <button type="button" onclick="closeChangeUserTypeModal()" class="modal-btn modal-btn-cancel" style="padding: 12px 35px; font-size: 1rem; min-width: 120px;">
-                    ❌ No
-                </button>
-                <button type="submit" class="modal-btn modal-btn-primary" style="padding: 12px 35px; font-size: 1rem; min-width: 120px;">
-                    ✅ Yes
-                </button>
-            </div>
-        </form>
     </div>
-</div>
 
     <script>
         // Store current user ID for self-check
         const currentUserId = {{ user.id }};
+
+        function viewUserDetails(username, fullName, email, contact, verified, active, isAdmin, joinedDate) {
+            const modal = document.getElementById('viewUserModal');
+            const details = document.getElementById('userDetails');
+            
+            const isVerified = verified === 'True';
+            const isActive = active === 'True';
+            const isSuperuser = isAdmin === 'True';
+            
+            details.innerHTML = `
+                <div class="detail-row">
+                    <div class="detail-label">Username</div>
+                    <div class="detail-value">${username}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Full Name</div>
+                    <div class="detail-value">${fullName}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Email</div>
+                    <div class="detail-value">${email}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Contact Number</div>
+                    <div class="detail-value">${contact || 'Not provided'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Verification Status</div>
+                    <div class="detail-value">
+                        <span class="status-badge ${isVerified ? 'status-verified' : 'status-pending'}">
+                            ${isVerified ? '✓ Verified' : '⏳ Pending'}
+                        </span>
+                    </div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">User Type</div>
+                    <div class="detail-value">
+                        <span class="status-badge ${isSuperuser ? 'user-type-admin' : 'user-type-resident'}" style="background: ${isSuperuser ? '#b6ff7a' : '#ffe680'}; color: #000;">
+                            ${isSuperuser ? 'Admin' : 'Resident'}
+                        </span>
+                    </div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Account Status</div>
+                    <div class="detail-value">
+                        <span class="status-badge ${isActive ? 'status-active' : 'status-inactive'}">
+                            ${isActive ? 'Active' : 'Inactive'}
+                        </span>
+                    </div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Date Joined</div>
+                    <div class="detail-value">${joinedDate}</div>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+        }
+
+        function closeViewUserModal() {
+            document.getElementById('viewUserModal').classList.remove('active');
+        }
 
         function confirmVerify(userId, username) {
             const modal = document.getElementById('verifyModal');
             const form = document.getElementById('verifyForm');
             const usernameEl = document.getElementById('verifyUsername');
             
-            form.action = `/accounts/admin/users/${userId}/verify/`;
+            // FIXED: Correct URL pattern
+            form.action = `/administration/users/${userId}/verify/`;
             usernameEl.textContent = username;
             modal.classList.add('active');
         }
@@ -620,7 +723,8 @@
             const regularWarning = document.getElementById('deactivateRegularWarning');
             const deactivateBtn = document.getElementById('deactivateButton');
             
-            form.action = `/accounts/admin/users/${userId}/deactivate/`;
+            // FIXED: Correct URL pattern
+            form.action = `/administration/users/${userId}/deactivate/`;
             usernameEl.textContent = username;
             
             // Check if deactivating own account
@@ -661,34 +765,14 @@
             const form = document.getElementById('activateForm');
             const usernameEl = document.getElementById('activateUsername');
             
-            form.action = `/accounts/admin/users/${userId}/activate/`;
+            // FIXED: Correct URL pattern
+            form.action = `/administration/users/${userId}/activate/`;
             usernameEl.textContent = username;
             modal.classList.add('active');
         }
 
         function closeActivateModal() {
             document.getElementById('activateModal').classList.remove('active');
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const verifyModal = document.getElementById('verifyModal');
-            const deactivateModal = document.getElementById('deactivateModal');
-            const activateModal = document.getElementById('activateModal');
-            const changeUserTypeModal = document.getElementById('changeUserTypeModal');
-            
-            if (event.target == verifyModal) {
-                closeVerifyModal();
-            }
-            if (event.target == deactivateModal) {
-                closeDeactivateModal();
-            }
-            if (event.target == activateModal) {
-                closeActivateModal();
-            }
-            if (event.target == changeUserTypeModal) {
-                closeChangeUserTypeModal();
-            }
         }
 
         // Change User Type functionality
@@ -698,7 +782,7 @@
             const usernameEl = document.getElementById('changeTypeUsername');
             const newTypeEl = document.getElementById('changeTypeNewType');
             const valueInput = document.getElementById('changeTypeValue');
-            const userIdInput = document.getElementById('changeTypeUserId');  // ✅ ADD THIS LINE
+            const userIdInput = document.getElementById('changeTypeUserId');
             const adminInfo = document.getElementById('changeTypeAdminInfo');
             const residentInfo = document.getElementById('changeTypeResidentInfo');
             
@@ -706,8 +790,8 @@
             const row = event.target.closest('tr');
             const username = row.querySelector('td strong').textContent;
             
-            // ✅ UPDATED: Use clean URL without user_id in path
-            form.action = '{% url "accounts:admin_change_user_type" %}';
+            // ✅ UPDATED: Use correct Django URL pattern from administration app
+            form.action = '{% url "administration:admin_change_user_type" %}';
             
             // ✅ ADD THIS: Set user_id in hidden input
             userIdInput.value = userId;
@@ -730,6 +814,31 @@
 
         function closeChangeUserTypeModal() {
             document.getElementById('changeUserTypeModal').classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const viewUserModal = document.getElementById('viewUserModal');
+            const verifyModal = document.getElementById('verifyModal');
+            const deactivateModal = document.getElementById('deactivateModal');
+            const activateModal = document.getElementById('activateModal');
+            const changeUserTypeModal = document.getElementById('changeUserTypeModal');
+            
+            if (event.target == viewUserModal) {
+                closeViewUserModal();
+            }
+            if (event.target == verifyModal) {
+                closeVerifyModal();
+            }
+            if (event.target == deactivateModal) {
+                closeDeactivateModal();
+            }
+            if (event.target == activateModal) {
+                closeActivateModal();
+            }
+            if (event.target == changeUserTypeModal) {
+                closeChangeUserTypeModal();
+            }
         }
     </script>
 </body>

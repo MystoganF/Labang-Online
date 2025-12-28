@@ -363,13 +363,11 @@
                 <p>{{ user.full_name }}</p>
             </div>
             <ul class="sidebar-menu">
-                <li><a href="{% url 'accounts:admin_dashboard' %}"><i>📊</i> Dashboard</a></li>
-                <li><a href="{% url 'accounts:admin_users' %}"><i>👥</i> Users</a></li>
-                <li><a href="{% url 'accounts:admin_certificates' %}"><i>📄</i> Certificates</a></li>
-                <li><a href="{% url 'accounts:admin_reports' %}"><i>📋</i> Reports</a></li>
-                <li><a href="{% url 'accounts:admin_announcements' %}"><i>📢</i> Announcements</a></li>
-                <li><a href="{% url 'accounts:personal_info' %}"><i>🏠</i> User View</a></li>
-                <li><a href="{% url 'accounts:logout_confirm' %}"><i>🚪</i> Logout</a></li>
+                <li><a href="{% url 'administration:admin_dashboard' %}"><i>📊</i> Dashboard</a></li>
+                <li><a href="{% url 'administration:admin_users' %}"><i>👥</i> Users</a></li>
+                <li><a href="{% url 'administration:admin_certificates' %}" class="active"><i>📄</i> Certificates</a></li>
+                <li><a href="{% url 'administration:admin_reports' %}"><i>📋</i> Reports</a></li>
+                <li><a href="{% url 'administration:admin_announcements' %}"><i>📢</i> Announcements</a></li>
             </ul>
         </aside>
 
@@ -637,9 +635,16 @@
             if (currentRequestId) {
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = `/accounts/admin/certificates/${currentRequestId}/delete/`;
+                // FIXED: Correct URL pattern
+                form.action = `/administration/certificates/${currentRequestId}/delete/`;
                 const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
-                if (csrfToken) { form.appendChild(csrfToken.cloneNode(true)); }
+                if (csrfToken) { 
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = 'csrfmiddlewaretoken';
+                    csrfInput.value = csrfToken.value;
+                    form.appendChild(csrfInput);
+                }
                 document.body.appendChild(form);
                 form.submit();
             }
@@ -656,11 +661,16 @@
                 // Create and submit the form programmatically
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = `/accounts/admin/certificates/${currentRequestId}/verify-payment/`;
+                // FIXED: Correct URL pattern
+                form.action = `/administration/certificates/${currentRequestId}/verify-payment/`;
                 
                 const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
                 if (csrfToken) {
-                    form.appendChild(csrfToken.cloneNode(true));
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = 'csrfmiddlewaretoken';
+                    csrfInput.value = csrfToken.value;
+                    form.appendChild(csrfInput);
                 }
                 
                 document.body.appendChild(form);
@@ -691,11 +701,16 @@
                 // Create and submit the form programmatically
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = `/accounts/admin/certificates/${currentRequestId}/reject-payment/`;
+                // FIXED: Correct URL pattern
+                form.action = `/administration/certificates/${currentRequestId}/reject-payment/`;
                 
                 const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
                 if (csrfToken) {
-                    form.appendChild(csrfToken.cloneNode(true));
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = 'csrfmiddlewaretoken';
+                    csrfInput.value = csrfToken.value;
+                    form.appendChild(csrfInput);
                 }
                 
                 document.body.appendChild(form);
@@ -733,7 +748,8 @@
             const form = document.getElementById('claimForm');
             const select = document.getElementById('claim_status_select');
             
-            form.action = `/accounts/admin/certificates/${requestId}/update-claim/`;
+            // FIXED: Correct URL pattern
+            form.action = `/administration/certificates/${requestId}/update-claim/`;
             select.value = currentStatus;
             modal.classList.add('active');
         }

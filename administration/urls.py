@@ -12,7 +12,7 @@ urlpatterns = [
     path('users/<int:user_id>/verify/', views.admin_verify_user, name='admin_verify_user'),
     path('users/<int:user_id>/deactivate/', views.admin_deactivate_user, name='admin_deactivate_user'),
     path('users/<int:user_id>/activate/', views.admin_activate_user, name='admin_activate_user'),
-    path('users/<int:user_id>/change-type/', views.admin_change_user_type, name='admin_change_user_type'),
+    path('users/change-type/', views.admin_change_user_type, name='admin_change_user_type'),
     
     # Certificate Management
     path('certificates/', views.admin_certificates, name='admin_certificates'),

@@ -375,13 +375,11 @@
                 <p>{{ user.full_name }}</p>
             </div>
             <ul class="sidebar-menu">
-                <li><a href="{% url 'accounts:admin_dashboard' %}"><i>📊</i> Dashboard</a></li>
-                <li><a href="{% url 'accounts:admin_users' %}"><i>👥</i> Users</a></li>
-                <li><a href="{% url 'accounts:admin_certificates' %}"><i>📄</i> Certificates</a></li>
-                <li><a href="{% url 'accounts:admin_reports' %}"><i>📋</i> Reports</a></li>
-                <li><a href="{% url 'accounts:admin_announcements' %}"><i>📢</i> Announcements</a></li>
-                <li><a href="{% url 'accounts:personal_info' %}"><i>🏠</i> User View</a></li>
-                <li><a href="{% url 'accounts:logout_confirm' %}"><i>🚪</i> Logout</a></li>
+                <li><a href="{% url 'administration:admin_dashboard' %}"><i>📊</i> Dashboard</a></li>
+                <li><a href="{% url 'administration:admin_users' %}"><i>👥</i> Users</a></li>
+                <li><a href="{% url 'administration:admin_certificates' %}"><i>📄</i> Certificates</a></li>
+                <li><a href="{% url 'administration:admin_reports' %}"><i>📋</i> Reports</a></li>
+                <li><a href="{% url 'administration:admin_announcements' %}" class="active"><i>📢</i> Announcements</a></li>
             </ul>
         </aside>
 
@@ -446,7 +444,7 @@
                     <div class="announcement-actions">
                         <button onclick="openEditModal({{ announcement.id }}, '{{ announcement.title|escapejs }}', '{{ announcement.content|escapejs }}', '{{ announcement.announcement_type }}', {{ announcement.is_active|lower }})" 
                                 class="action-btn btn-edit">✏️ Edit</button>
-                        <form method="POST" action="{% url 'accounts:admin_toggle_announcement' announcement.id %}" style="display: inline;">
+                        <form method="POST" action="{% url 'administration:admin_toggle_announcement' announcement.id %}" style="display: inline;">
                             {% csrf_token %}
                             <button type="submit" class="action-btn btn-toggle">
                                 {% if announcement.is_active %}🔒 Deactivate{% else %}🔓 Activate{% endif %}
@@ -474,7 +472,7 @@
             <div class="modal-header">
                 <h2>Create New Announcement</h2>
             </div>
-            <form method="POST" action="{% url 'accounts:admin_create_announcement' %}">
+            <form method="POST" action="{% url 'administration:admin_create_announcement' %}">
                 {% csrf_token %}
                 <div class="modal-body">
                     <div class="form-group">
@@ -580,7 +578,8 @@
             const modal = document.getElementById('editModal');
             const form = document.getElementById('editForm');
             
-            form.action = `/accounts/admin/announcements/${id}/edit/`;
+            // Updated to use Django URL pattern with announcement_id parameter
+            form.action = `/administration/announcements/${id}/edit/`;
             document.getElementById('edit_title').value = title;
             document.getElementById('edit_content').value = content;
             document.getElementById('edit_type').value = type;
@@ -597,7 +596,8 @@
             const modal = document.getElementById('deleteModal');
             const form = document.getElementById('deleteForm');
             
-            form.action = `/accounts/admin/announcements/${id}/delete/`;
+            // Updated to use Django URL pattern with announcement_id parameter
+            form.action = `/administration/announcements/${id}/delete/`;
             document.getElementById('deleteTitle').textContent = title;
             
             modal.classList.add('active');

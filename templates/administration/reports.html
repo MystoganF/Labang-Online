@@ -381,13 +381,11 @@
                 <p>{{ user.full_name }}</p>
             </div>
             <ul class="sidebar-menu">
-                <li><a href="{% url 'accounts:admin_dashboard' %}"><i>📊</i> Dashboard</a></li>
-                <li><a href="{% url 'accounts:admin_users' %}"><i>👥</i> Users</a></li>
-                <li><a href="{% url 'accounts:admin_certificates' %}"><i>📄</i> Certificates</a></li>
-                <li><a href="{% url 'accounts:admin_reports' %}"><i>📋</i> Reports</a></li>
-                <li><a href="{% url 'accounts:admin_announcements' %}"><i>📢</i> Announcements</a></li>
-                <li><a href="{% url 'accounts:personal_info' %}"><i>🏠</i> User View</a></li>
-                <li><a href="{% url 'accounts:logout_confirm' %}"><i>🚪</i> Logout</a></li>
+                <li><a href="{% url 'administration:admin_dashboard' %}"><i>📊</i> Dashboard</a></li>
+                <li><a href="{% url 'administration:admin_users' %}"><i>👥</i> Users</a></li>
+                <li><a href="{% url 'administration:admin_certificates' %}"><i>📄</i> Certificates</a></li>
+                <li><a href="{% url 'administration:admin_reports' %}" class="active"><i>📋</i> Reports</a></li>
+                <li><a href="{% url 'administration:admin_announcements' %}"><i>📢</i> Announcements</a></li>
             </ul>
         </aside>
 
@@ -456,7 +454,7 @@
                                 <td><span class="status-badge status-{{ report.status|lower|cut:' ' }}">{{ report.status }}</span></td>
                                 <td>{{ report.created_at|date:"M d, Y" }}</td>
                                 <td>
-                                    <button type="button" class="action-btn btn-view" onclick="viewReport(this)" data-report-id="{{ report.report_id }}" data-resident-name="{{ report.user.full_name }}" data-incident-type="{{ report.incident_type }}" data-location="{{ report.place }}" data-message="{{ report.message }}" data-status="{{ report.status }}" data-date="{{ report.created_at|date:'M d, Y H:i' }}">👁 View</button>
+                                    <button type="button" class="action-btn btn-view" onclick="viewReport(this)" data-report-id="{{ report.report_id }}" data-resident-name="{{ report.user.full_name|escapejs }}" data-incident-type="{{ report.incident_type|escapejs }}" data-location="{{ report.place|escapejs }}" data-message="{{ report.message|escapejs }}" data-status="{{ report.status|escapejs }}" data-date="{{ report.created_at|date:'M d, Y H:i' }}">👁 View</button>
                                     <button onclick="openStatusModal('{{ report.report_id }}', '{{ report.status }}')" class="action-btn btn-update">✏ Update</button>
                                     <button onclick="confirmDelete('{{ report.report_id }}')" class="action-btn btn-delete">🗑 Delete</button>
                                 </td>
@@ -556,41 +554,35 @@
             details.innerHTML = `
                 <div class="detail-row">
                     <div class="detail-label">Report ID</div>
-                    <div class="detail-value">${escapeHtml(id)}</div>
+                    <div class="detail-value">${id}</div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Resident Name</div>
-                    <div class="detail-value">${escapeHtml(name)}</div>
+                    <div class="detail-value">${name}</div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Incident Type</div>
-                    <div class="detail-value">${escapeHtml(type)}</div>
+                    <div class="detail-value">${type}</div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Location</div>
-                    <div class="detail-value">${escapeHtml(place)}</div>
+                    <div class="detail-value">${place}</div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Status</div>
-                    <div class="detail-value"><span class="status-badge status-${statusClass}">${escapeHtml(status)}</span></div>
+                    <div class="detail-value"><span class="status-badge status-${statusClass}">${status}</span></div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Reported On</div>
-                    <div class="detail-value">${escapeHtml(date)}</div>
+                    <div class="detail-value">${date}</div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Description</div>
-                    <div class="detail-value">${escapeHtml(message)}</div>
+                    <div class="detail-value">${message}</div>
                 </div>
             `;
             
             modal.classList.add('active');
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
         }
 
         function closeViewModal() {
@@ -602,7 +594,8 @@
             const form = document.getElementById('statusForm');
             const select = document.getElementById('status_select');
             
-            form.action = `/accounts/admin/reports/${reportId}/update-status/`;
+            // FIXED: Correct URL pattern
+            form.action = `/administration/reports/${reportId}/update-status/`;
             select.value = currentStatus;
             modal.classList.add('active');
         }
@@ -615,7 +608,8 @@
             const modal = document.getElementById('deleteModal');
             const form = document.getElementById('deleteForm');
             
-            form.action = `/accounts/admin/reports/${reportId}/delete/`;
+            // FIXED: Correct URL pattern
+            form.action = `/administration/reports/${reportId}/delete/`;
             modal.classList.add('active');
         }
 

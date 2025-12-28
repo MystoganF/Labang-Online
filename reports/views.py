@@ -8,7 +8,7 @@ from django.views.decorators.cache import never_cache
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db import models
-import uuid
+
 
 from .models import IncidentReport
 from announcements.models import Announcement
