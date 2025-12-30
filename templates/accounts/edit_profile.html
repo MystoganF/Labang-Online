@@ -29,8 +29,8 @@
     {% for message in messages %}
     <div class="msg {% if message.tags %}{{ message.tags }}{% endif %}" 
          style="padding: 12px 16px; border-radius: 8px; margin-bottom: 10px;
-                {% if message.tags == 'error' %}background: rgba(30, 41, 59, 0.18); color: var(--text-secondary); border: 1px solid rgba(30, 41, 59, 0.3);{% endif %}
-                {% if message.tags == 'success' %}background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3);{% endif %}
+                {% if message.tags == 'error' %}background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);{% endif %}
+                {% if message.tags == 'success' %}background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);{% endif %}
                 {% if message.tags == 'warning' %}background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3);{% endif %}">
       {{ message }}
     </div>
@@ -117,6 +117,10 @@
           <td><input type="text" name="username" value="{{ user.username }}" required /></td>
         </tr>
         <tr>
+          <td>Email:</td>
+          <td><input type="email" name="email" value="{{ user.email }}" required /></td>
+        </tr>
+        <tr>
           <td>Date of Birth:</td>
           <td><input type="date" name="date_of_birth" value="{{ user.date_of_birth|date:'Y-m-d' }}" /></td>
         </tr>
@@ -137,7 +141,7 @@
           <td>
             <div class="two-col" style="margin-bottom:12px;">
               <input type="text" name="address_line" placeholder="Street Address" value="{{ user.address_line }}" required />
-              <input type="tel" name="contact_number" placeholder="Contact Number" value="{{ user.contact_number }}" required />
+              <input type="tel" name="contact_number" placeholder="e.g., +639171234567" value="{{ user.contact_number }}" required pattern="^\+63[0-9]{10}$" title="Phone number must start with +63 followed by 10 digits" />
             </div>
             <div class="two-col">
               <input type="text" name="barangay" placeholder="Barangay" value="{{ user.barangay|default:'Labangon' }}" disabled />
@@ -167,25 +171,70 @@
       </div>
     </div>
   </form>
-
-  <div class="info-section">
-    <h3>CONTACT INFORMATION</h3>
-    <table class="user-info-table">
-      <tr>
-        <td>Mobile:</td>
-        <td>{{ user.contact_number }}</td>
-      </tr>
-      <tr>
-        <td>Email:</td>
-        <td>{{ user.email }}</td>
-      </tr>
-    </table>
-  </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
+  // Auto-format phone number with +63 prefix
+  const phoneInput = document.querySelector('input[name="contact_number"]');
+  
+  if (phoneInput) {
+    // Format on input
+    phoneInput.addEventListener('input', function(e) {
+      let value = e.target.value;
+      
+      // Remove all non-digit characters except +
+      value = value.replace(/[^\d+]/g, '');
+      
+      // If user is typing and doesn't have +63, add it
+      if (!value.startsWith('+63')) {
+        // If starts with 0, replace with +63
+        if (value.startsWith('0')) {
+          value = '+63' + value.substring(1);
+        }
+        // If starts with 63, add +
+        else if (value.startsWith('63')) {
+          value = '+' + value;
+        }
+        // If starts with +, keep it and ensure 63 follows
+        else if (value.startsWith('+')) {
+          if (!value.startsWith('+63')) {
+            value = '+63' + value.substring(1);
+          }
+        }
+        // Otherwise add +63 prefix
+        else if (value.length > 0) {
+          value = '+63' + value;
+        }
+      }
+      
+      // Limit to +63 + 10 digits
+      if (value.length > 13) {
+        value = value.substring(0, 13);
+      }
+      
+      e.target.value = value;
+    });
+    
+    // Ensure +63 on focus if empty
+    phoneInput.addEventListener('focus', function(e) {
+      if (!e.target.value) {
+        e.target.value = '+63';
+      }
+    });
+    
+    // Validate on blur
+    phoneInput.addEventListener('blur', function(e) {
+      const value = e.target.value;
+      if (value && value !== '+63') {
+        if (value.length !== 13 || !value.startsWith('+63')) {
+          alert('Please enter a valid Philippine mobile number (e.g., +639171234567)');
+        }
+      }
+    });
+  }
+
   // Preview selected images before upload
   document.getElementById('profile-photo-input')?.addEventListener('change', function(e) {
     const file = e.target.files[0];

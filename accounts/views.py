@@ -396,6 +396,15 @@ def update_basic_info(request):
         else:
             user.username = new_username
     
+    # Handle email with uniqueness check
+    new_email = request.POST.get('email')
+    if new_email and new_email != user.email:
+        if User.objects.filter(email=new_email).exclude(pk=user.pk).exists():
+            messages.error(request, "Email already in use. Please use another email address.")
+            save_ok = False
+        else:
+            user.email = new_email
+    
     # Handle date_of_birth
     date_of_birth = request.POST.get('date_of_birth')
     if date_of_birth:

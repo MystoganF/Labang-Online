@@ -212,15 +212,6 @@ body {
   margin-bottom: 60px;
 }
 
-/* Make menu items clickable links */
-.sidebar .menu-item a {
-  text-decoration: none;
-  color: inherit;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-}
 
 /* Optional: Add distinct styling for admin button */
 .action-btn.admin-btn {
