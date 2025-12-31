@@ -1,62 +1,80 @@
-/* Ensure full page scroll like document request */
+/* announcement.css - Updated for fixed sidebar/topbar */
+
+/* Remove conflicting overflow rules */
 html, body {
-  overflow: visible !important;
-  height: auto !important;
-  min-height: 100% !important;
+  overflow: hidden !important;
+  height: 100% !important;
+  margin: 0;
+  padding: 0;
 }
 
 .dashboard-wrapper {
-  min-height: 100vh !important;
-  height: auto !important;
-  overflow: visible !important;
+  height: 100vh !important;
+  overflow: hidden !important;
+  display: flex;
 }
 
+/* Sidebar stays fixed */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+/* Main content takes remaining space */
 .main-content {
   flex: 1;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  min-height: 100vh !important;
-  height: auto !important;
-  scroll-behavior: smooth;
+  margin-left: 240px; /* Width of sidebar */
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+ 
 }
 
-/* Smooth scrollbar aligned to theme */
-.main-content::-webkit-scrollbar {
-  width: 8px;
-}
-.main-content::-webkit-scrollbar-track {
-  background: var(--bg);
-}
-.main-content::-webkit-scrollbar-thumb {
-  background: var(--panel-hover);
-  border-radius: 4px;
-}
-.main-content::-webkit-scrollbar-thumb:hover {
-  background: var(--brand);
-}
-
-/* Topbar matches dashboard theme */
+/* Topbar stays fixed at top */
 .topbar {
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 99;
   background: var(--panel);
   border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
 }
 
-/* Announcements layout - match document request container exactly */
+/* Content wrapper - this is what scrolls */
+.content-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+ 
+}
+
+/* Smooth scrollbar for content */
+.content-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+.content-wrapper::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+.content-wrapper::-webkit-scrollbar-thumb {
+  background: var(--panel-hover);
+  border-radius: 4px;
+}
+.content-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--brand);
+}
+
+/* Announcements container - centered with proper padding */
 .announcements-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px;
-  padding-bottom: 60px;
+  padding-bottom: 120px; /* CHANGE from 60px to 120px */
   width: 100%;
-}
-
-/* Ensure content wrapper has no extra padding */
-.content-wrapper {
-  padding: 0 !important;
-  gap: 0 !important;
 }
 
 .page-header {
@@ -108,6 +126,7 @@ html, body {
 .announcements-grid {
   display: grid;
   gap: 20px;
+  margin-bottom: 100px; /* ADD THIS LINE */
 }
 .announcement-card {
   background: var(--panel);
@@ -288,7 +307,22 @@ html, body {
 
 /* Mobile responsive */
 @media (max-width: 768px) {
+  .main-content {
+    margin-left: 70px; /* Collapsed sidebar width */
+  }
+  
   .announcements-container {
-    padding: 24px;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .filter-buttons {
+    justify-content: center;
+  }
+  
+  .filter-btn {
+    flex: 1;
+    min-width: 80px;
   }
 }

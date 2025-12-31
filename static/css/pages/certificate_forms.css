@@ -1,48 +1,86 @@
 /* Shared form styles across citizen-facing certificate pages - Fixed scrolling */
 
-/* Override the dashboard.css overflow restrictions */
-html, body {
-  overflow: visible !important;
-  height: auto !important;
-  min-height: 100% !important;
+/* Reset to fixed layout */
+html,
+body {
+  overflow: hidden !important;
+  height: 100% !important;
   margin: 0;
   padding: 0;
 }
 
 .dashboard-wrapper {
-  min-height: 100vh !important;
-  height: auto !important;
-  overflow: visible !important;
+  height: 100vh !important;
+  overflow: hidden !important;
   display: flex;
 }
 
+/* Sidebar stays fixed */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+/* Main content takes remaining space */
 .main-content {
   flex: 1;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  min-height: 100vh !important;
-  height: auto !important;
+  margin-left: 240px; /* Width of sidebar */
+  height: 100vh !important;
+  overflow: hidden !important;
   display: flex;
   flex-direction: column;
 }
 
-/* Remove fixed height from content-wrapper */
+/* Topbar stays fixed at top */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* Content wrapper - this is what scrolls */
 .content-wrapper {
-  height: auto !important;
-  min-height: auto !important;
-  overflow: visible !important;
-  flex: 1 !important;
+  flex: 1;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  min-height: 0; /* Important for flex scrolling */
+  height: auto;
+  padding: 0 !important;
+}
+
+/* Smooth scrollbar for content */
+.content-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+.content-wrapper::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+.content-wrapper::-webkit-scrollbar-thumb {
+  background: var(--panel-hover);
+  border-radius: 4px;
+}
+.content-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--brand);
 }
 
 .form-container {
-  max-width: 1200px;
+   max-width: 1200px;
   margin: 0 auto;
   padding: 24px;
-  padding-bottom: 60px;
+  padding-bottom: 100px; /* Increased from 60px to 100px */
   width: 100%;
 }
 
-.form-header { margin-bottom: 32px; }
+.form-header {
+  margin-bottom: 32px;
+}
 
 .form-header h1 {
   font-size: 32px;
@@ -50,14 +88,18 @@ html, body {
   color: #e5e7eb;
   margin: 0 0 8px 0;
 }
-.light .form-header h1 { color: #111827; }
+.light .form-header h1 {
+  color: #111827;
+}
 
 .form-header p {
   color: #9ca3af;
   font-size: 15px;
   margin: 0;
 }
-.light .form-header p { color: #374151; }
+.light .form-header p {
+  color: #374151;
+}
 
 .form-card {
   background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
@@ -71,8 +113,12 @@ html, body {
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
-.form-section { margin-bottom: 32px; }
-.form-section:last-child { margin-bottom: 0; }
+.form-section {
+  margin-bottom: 32px;
+}
+.form-section:last-child {
+  margin-bottom: 0;
+}
 
 .section-title {
   font-size: 18px;
@@ -83,16 +129,20 @@ html, body {
   align-items: center;
   gap: 8px;
 }
-.light .section-title { color: #111827; }
+.light .section-title {
+  color: #111827;
+}
 .section-title::before {
-  content: '';
+  content: "";
   width: 3px;
   height: 20px;
   background: linear-gradient(180deg, #10b981 0%, #10b981 100%);
   border-radius: 2px;
 }
 
-.form-group { margin-bottom: 20px; }
+.form-group {
+  margin-bottom: 20px;
+}
 .form-group label {
   display: block;
   font-size: 14px;
@@ -100,7 +150,9 @@ html, body {
   color: #cbd5e1;
   margin-bottom: 8px;
 }
-.light .form-group label { color: #1e293b; }
+.light .form-group label {
+  color: #1e293b;
+}
 
 .form-group input,
 .form-group textarea,
@@ -128,12 +180,25 @@ html, body {
   border-color: #10b981;
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
-.form-group textarea { min-height: 120px; resize: vertical; }
+.form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+}
 
-.readonly-field { background: rgba(148, 163, 184, 0.1) !important; cursor: not-allowed; }
-.light .readonly-field { background: #f1f5f9 !important; }
+.readonly-field {
+  background: rgba(148, 163, 184, 0.1) !important;
+  cursor: not-allowed;
+}
+.light .readonly-field {
+  background: #f1f5f9 !important;
+}
 
-.form-actions { display: flex; gap: 16px; margin-top: 32px; }
+.form-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 32px;
+  margin-bottom: 40px; /* Add bottom margin to push buttons up */
+}
 
 .btn-submit {
   flex: 1;
@@ -148,9 +213,9 @@ html, body {
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
-.btn-submit:hover { 
-  transform: translateY(-2px); 
-  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4); 
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
 }
 .btn-submit:disabled {
   opacity: 0.6;
@@ -172,9 +237,17 @@ html, body {
   display: inline-block;
   text-align: center;
 }
-.light .btn-cancel { background: white; color: #475569; border-color: #cbd5e1; }
-.btn-cancel:hover { background: rgba(148, 163, 184, 0.2); }
-.light .btn-cancel:hover { background: #f1f5f9; }
+.light .btn-cancel {
+  background: white;
+  color: #475569;
+  border-color: #cbd5e1;
+}
+.btn-cancel:hover {
+  background: rgba(148, 163, 184, 0.2);
+}
+.light .btn-cancel:hover {
+  background: #f1f5f9;
+}
 
 .price-display {
   background: rgba(16, 185, 129, 0.1);
@@ -184,16 +257,26 @@ html, body {
   text-align: center;
   margin-bottom: 24px;
 }
-.price-label { font-size: 14px; color: #9ca3af; margin-bottom: 8px; }
-.light .price-label { color: #64748b; }
-.price-amount { font-size: 36px; font-weight: 700; color: #10b981; }
+.price-label {
+  font-size: 14px;
+  color: #9ca3af;
+  margin-bottom: 8px;
+}
+.light .price-label {
+  color: #64748b;
+}
+.price-amount {
+  font-size: 36px;
+  font-weight: 700;
+  color: #10b981;
+}
 
 /* Base Info Box (pages can override colors as needed) */
-.info-box { 
-  border-radius: 12px; 
-  padding: 16px; 
-  margin-bottom: 24px; 
-  display: flex; 
+.info-box {
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+  display: flex;
   gap: 12px;
   background: rgba(30, 41, 59, 0.12);
   border: 1px solid rgba(30, 41, 59, 0.3);
@@ -202,35 +285,51 @@ html, body {
   background: rgba(16, 185, 129, 0.08);
   border: 1px solid rgba(16, 185, 129, 0.2);
 }
-.info-box-icon { color: var(--brand); flex-shrink: 0; }
-.info-box-content { flex: 1; }
-.info-box-content p { margin: 0; color: #cbd5e1; font-size: 14px; line-height: 1.5; }
-.light .info-box-content p { color: #475569; }
+.info-box-icon {
+  color: var(--brand);
+  flex-shrink: 0;
+}
+.info-box-content {
+  flex: 1;
+}
+.info-box-content p {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.light .info-box-content p {
+  color: #475569;
+}
 
-/* Responsive adjustments */
+/* Mobile responsive */
 @media (max-width: 768px) {
+  .main-content {
+    margin-left: 70px; /* Collapsed sidebar width */
+  }
+
   .form-container {
     padding: 16px;
     padding-bottom: 40px;
   }
-  
+
   .form-card {
     padding: 20px;
   }
-  
+
   .form-header h1 {
     font-size: 24px;
   }
-  
+
   .form-actions {
     flex-direction: column;
   }
-  
+
   .btn-submit,
   .btn-cancel {
     width: 100%;
   }
-  
+
   .price-amount {
     font-size: 28px;
   }
@@ -241,15 +340,15 @@ html, body {
     padding: 12px;
     padding-bottom: 32px;
   }
-  
+
   .form-card {
     padding: 16px;
   }
-  
+
   .section-title {
     font-size: 16px;
   }
-  
+
   .price-display {
     padding: 16px;
   }

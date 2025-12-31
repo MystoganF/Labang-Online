@@ -1,30 +1,70 @@
-html,
-body {
-  overflow: visible !important;
-  height: auto !important;
-  min-height: 100% !important;
+/* document_request.css - Updated for fixed sidebar/topbar */
+
+/* Remove conflicting overflow rules */
+html, body {
+  overflow: hidden !important;
+  height: 100% !important;
+  margin: 0;
+  padding: 0;
 }
 
 .dashboard-wrapper {
-  min-height: 100vh !important;
-  height: auto !important;
-  overflow: visible !important;
+  height: 100vh !important;
+  overflow: hidden !important;
+  display: flex;
 }
 
+/* Sidebar stays fixed */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+/* Main content takes remaining space */
 .main-content {
   flex: 1;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  min-height: 100vh !important;
-  height: auto !important;
+  margin-left: 240px; /* Width of sidebar */
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Remove fixed height from content-wrapper */
+/* Topbar stays fixed at top */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* Content wrapper - this is what scrolls */
 .content-wrapper {
-  height: auto !important;
-  min-height: auto !important;
-  overflow: visible !important;
-  flex: 1 !important;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 !important;
+}
+
+/* Smooth scrollbar for content */
+.content-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+.content-wrapper::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+.content-wrapper::-webkit-scrollbar-thumb {
+  background: var(--panel-hover);
+  border-radius: 4px;
+}
+.content-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--brand);
 }
 
 /* User profile styling */
@@ -377,6 +417,10 @@ body {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .main-content {
+    margin-left: 70px; /* Collapsed sidebar width */
+  }
+  
   .page-header-row {
     flex-direction: column;
     align-items: flex-start;
@@ -389,5 +433,15 @@ body {
 
   .certificates-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .request-container {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .request-container {
+    padding: 12px;
   }
 }

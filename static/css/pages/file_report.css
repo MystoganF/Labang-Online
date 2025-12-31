@@ -1,58 +1,81 @@
 /* File Report page styles extracted from file_report.html */
 html, body {
-  /* Match global app theme background gradient */
-  background: linear-gradient(180deg, var(--bg) 0%, var(--bg-secondary) 100%);
-  overflow: visible !important;
-  height: auto !important;
-  min-height: 100% !important;
+  
+  height: 100% !important;
   margin: 0;
   padding: 0;
 }
 
 .dashboard-wrapper {
-  min-height: 100vh !important;
-  height: auto !important;
-  overflow: visible !important;
+  height: 100vh !important;
+ 
   display: flex;
 }
 
 .main-content {
   flex: 1;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  min-height: 100vh !important;
-  height: auto !important;
+  margin-left: 240px; /* Width of sidebar */
+ 
   display: flex;
   flex-direction: column;
 }
 
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+ 
+  z-index: 100;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
 .content-wrapper {
-  height: auto !important;
-  min-height: auto !important;
-  overflow: visible !important;
-  flex: 1 !important;
-  display: flex;
-  padding: 20px;
-  gap: 20px;
+  flex: 1;
+  padding: 0 !important;
+}
+
+/* Smooth scrollbar for content */
+.content-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+.content-wrapper::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+.content-wrapper::-webkit-scrollbar-thumb {
+  background: var(--panel-hover);
+  border-radius: 4px;
+}
+.content-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--brand);
 }
 
 .content-right {
   flex: 1;
-  background: transparent; /* match pure black page background */
+  background: transparent; 
   border-radius: 0;
-  padding: 0; /* spacing handled by .report-container */
-  overflow-y: visible !important;
+  padding: 0; 
+ 
   max-height: none !important;
   height: auto !important;
 }
 
-/* Centered container for better readability on wide screens - MATCHED TO DOCUMENT REQUEST */
+
 .report-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px;
-  padding-bottom: 60px;
-  width: 100%; /* Added to match request-container */
+
+  width: 100%;
 }
 
 .report-header {
@@ -62,7 +85,7 @@ html, body {
   gap: 16px;
   flex-wrap: wrap;
   text-align: initial;
-  margin-bottom: 32px; /* match Document Request spacing */
+  margin-bottom: 32px;
   min-height: 40px;
 }
 

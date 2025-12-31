@@ -1,45 +1,88 @@
 /* Certificate Requests - Fixed scrolling and layout */
 
-/* Override the dashboard.css overflow restrictions */
+/* Reset to fixed layout */
 html, body {
-  overflow: visible !important;
-  height: auto !important;
-  min-height: 100% !important;
+  overflow: hidden !important;
+  height: 100% !important;
   margin: 0;
   padding: 0;
 }
 
 .dashboard-wrapper {
-  min-height: 100vh !important;
-  height: auto !important;
-  overflow: visible !important;
+  height: 100vh !important;
+  overflow: hidden !important;
   display: flex;
 }
 
+/* Sidebar stays fixed */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+/* Main content takes remaining space */
 .main-content {
   flex: 1;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  min-height: 100vh !important;
-  height: auto !important;
+  margin-left: 240px; /* Width of sidebar */
+  height: 100vh !important;
+  overflow: hidden !important;
   display: flex;
   flex-direction: column;
 }
 
-/* Remove fixed height from content-wrapper */
+/* Topbar stays fixed at top */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* Content wrapper - this is what scrolls */
 .content-wrapper {
-  height: auto !important;
-  min-height: auto !important;
-  overflow: visible !important;
-  flex: 1 !important;
+  flex: 1;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  min-height: 0; /* Important for flex scrolling */
+  height: auto;
+  padding: 0 !important;
+}
+
+/* Smooth scrollbar for content */
+.content-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+.content-wrapper::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+.content-wrapper::-webkit-scrollbar-thumb {
+  background: var(--panel-hover);
+  border-radius: 4px;
+}
+.content-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--brand);
 }
 
 .records-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px;
-  padding-bottom: 60px;
+  padding-bottom: 150px !important; /* Increased for footer spacing */
   width: 100%;
+  position: relative;
+}
+
+/* Add bottom safe area for mobile */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .records-container {
+    padding-bottom: calc(150px + env(safe-area-inset-bottom)) !important;
+  }
 }
 
 .page-header {
@@ -225,6 +268,7 @@ html, body {
   border: 1px solid rgba(16, 185, 129, 0.2);
   border-radius: 12px;
   overflow: hidden;
+  margin-bottom: 60px !important; /* Increased bottom margin */
 }
 
 .light .records-table-wrapper {
@@ -645,22 +689,15 @@ html, body {
   100% { box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3); }
 }
 
-/* Responsive */
-@media (max-width: 1024px) {
-  .summary-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .records-table {
-    display: block;
-    overflow-x: auto;
-  }
-}
-
+/* Mobile responsive */
 @media (max-width: 768px) {
+  .main-content {
+    margin-left: 70px; /* Collapsed sidebar width */
+  }
+
   .records-container {
     padding: 16px;
-    padding-bottom: 40px;
+    padding-bottom: 150px !important; /* Keep large padding */
   }
 
   .header-top {
@@ -678,7 +715,7 @@ html, body {
   }
 
   .summary-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .filters-grid {
@@ -695,12 +732,16 @@ html, body {
     font-size: 11px;
     min-width: 60px;
   }
+  
+  .records-table-wrapper {
+    margin-bottom: 80px !important; /* More spacing on mobile */
+  }
 }
 
 @media (max-width: 480px) {
   .records-container {
     padding: 12px;
-    padding-bottom: 32px;
+    padding-bottom: 160px !important; /* Extra padding for very small screens */
   }
 
   .page-header h1 {
@@ -715,4 +756,37 @@ html, body {
   .records-table-wrapper {
     border-radius: 8px;
   }
+  
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .records-table-wrapper {
+    margin-bottom: 100px !important; /* Maximum spacing */
+  }
+}
+
+/* Table responsive for mobile */
+@media (max-width: 1024px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .records-table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+/* Add visual footer spacer if needed */
+.footer-spacer {
+  height: 100px;
+  width: 100%;
+  visibility: hidden;
+  flex-shrink: 0;
+}
+
+/* Ensure the last element has proper margin */
+.records-container > *:last-child {
+  margin-bottom: 40px;
 }

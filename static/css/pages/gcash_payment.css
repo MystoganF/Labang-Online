@@ -1,44 +1,75 @@
 /* GCash Payment - Fixed scrolling and layout */
 
-/* Override the dashboard.css overflow restrictions */
 html, body {
-  overflow: visible !important;
-  height: auto !important;
-  min-height: 100% !important;
+  overflow: hidden !important;
+  height: 100% !important;
   margin: 0;
   padding: 0;
 }
 
 .dashboard-wrapper {
-  min-height: 100vh !important;
-  height: auto !important;
-  overflow: visible !important;
+  height: 100vh !important;
+  overflow: hidden !important;
   display: flex;
 }
 
+/* Sidebar stays fixed */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+/* Topbar stays fixed at top */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* Main content takes remaining space */
 .main-content {
   flex: 1;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  min-height: 100vh !important;
-  height: auto !important;
+  margin-left: 240px; /* Width of sidebar */
+  height: 100vh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
-/* Remove fixed height from content-wrapper */
 .content-wrapper {
-  height: auto !important;
-  min-height: auto !important;
-  overflow: visible !important;
-  flex: 1 !important;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 !important;
+}
+
+/* Smooth scrollbar for content */
+.content-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+.content-wrapper::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+.content-wrapper::-webkit-scrollbar-thumb {
+  background: var(--panel-hover);
+  border-radius: 4px;
+}
+.content-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--brand);
 }
 
 .payment-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px;
-  padding-bottom: 60px;
+  padding-bottom: 120px; /* CHANGED from 60px */
   width: 100%;
 }
 
