@@ -60,9 +60,10 @@ Labang Online{% endblock %} {% block content %}
         </div>
 
         <div class="actions center-actions">
-          <button type="submit" class="btn btn-primary">Verify Code</button>
+          
           <a href="{% url 'accounts:forgot_password' %}" class="btn btn-secondary">Back to Email</a>
           <a href="{% url 'accounts:resend_code' user.id %}" class="btn btn-secondary">Resend Code</a>
+          <button type="submit" class="btn btn-primary">Verify Code</button>
         </div>
       </form>
     </div>

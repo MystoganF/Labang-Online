@@ -5,366 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Announcement Management - Admin</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
-            min-height: 100vh;
-        }
-
-        .admin-container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 260px;
-            background: #2c3e50;
-            color: white;
-            padding: 20px 0;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-        }
-
-        .sidebar-header {
-            padding: 0 20px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 20px;
-        }
-
-        .sidebar-header h2 {
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-        }
-
-        .sidebar-header p {
-            font-size: 0.9rem;
-            color: #bdc3c7;
-        }
-
-        .sidebar-menu {
-            list-style: none;
-        }
-
-        .sidebar-menu li {
-            margin-bottom: 5px;
-        }
-
-        .sidebar-menu a {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            color: #ecf0f1;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-
-        .sidebar-menu a:hover {
-            background: rgba(255,255,255,0.1);
-            padding-left: 25px;
-        }
-
-        .sidebar-menu a.active {
-            background: #3498db;
-            border-left: 4px solid #2980b9;
-        }
-
-        .sidebar-menu a i {
-            margin-right: 10px;
-            width: 20px;
-        }
-
-        /* Main Content */
-        .main-content {
-            margin-left: 260px;
-            flex: 1;
-            padding: 30px;
-            width: calc(100% - 260px);
-        }
-
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .page-header h1 {
-            font-size: 2rem;
-            color: #2c3e50;
-        }
-
-        .btn-create {
-            padding: 12px 24px;
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.95rem;
-            transition: background 0.3s;
-        }
-
-        .btn-create:hover {
-            background: #218838;
-        }
-
-        /* Filters */
-        .filters-section {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-
-        .filters-form {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            align-items: end;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group label {
-            font-size: 0.9rem;
-            color: #2c3e50;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 0.95rem;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .filter-btn {
-            padding: 10px 20px;
-            background: #3498db;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.95rem;
-            transition: background 0.3s;
-        }
-
-        .filter-btn:hover {
-            background: #2980b9;
-        }
-
-        /* Announcements Grid */
-        .announcements-grid {
-            display: grid;
-            gap: 20px;
-        }
-
-        .announcement-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            border-left: 4px solid #3498db;
-        }
-
-        .announcement-card.inactive {
-            opacity: 0.6;
-            border-left-color: #95a5a6;
-        }
-
-        .announcement-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 12px;
-        }
-
-        .announcement-type {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .type-general { background: #d4edda; color: #155724; }
-        .type-event { background: #cfe2ff; color: #084298; }
-        .type-alert { background: #f8d7da; color: #721c24; }
-        .type-maintenance { background: #fff3cd; color: #856404; }
-
-        .announcement-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 8px;
-        }
-
-        .announcement-meta {
-            font-size: 0.85rem;
-            color: #7f8c8d;
-            margin-bottom: 12px;
-        }
-
-        .announcement-content {
-            color: #2c3e50;
-            line-height: 1.6;
-            margin-bottom: 12px;
-        }
-
-        .announcement-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .action-btn {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.3s;
-        }
-
-        .btn-edit {
-            background: #3498db;
-            color: white;
-        }
-
-        .btn-edit:hover {
-            background: #2980b9;
-        }
-
-        .btn-toggle {
-            background: #f39c12;
-            color: white;
-        }
-
-        .btn-toggle:hover {
-            background: #e67e22;
-        }
-
-        .btn-delete {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn-delete:hover {
-            background: #c82333;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            background: white;
-            border-radius: 10px;
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-        }
-
-        .modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            margin-bottom: 20px;
-        }
-
-        .modal-header h2 {
-            color: #2c3e50;
-        }
-
-        .modal-body {
-            margin-bottom: 20px;
-        }
-
-        .modal-footer {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-        }
-
-        .modal-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.95rem;
-        }
-
-        .modal-btn-primary {
-            background: #28a745;
-            color: white;
-        }
-
-        .modal-btn-cancel {
-            background: #95a5a6;
-            color: white;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .checkbox-group input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/administration/admin_announcement.css' %}">
 </head>
 <body>
     <div class="admin-container">
@@ -381,6 +22,12 @@
                 <li><a href="{% url 'administration:admin_reports' %}"><i>📋</i> Reports</a></li>
                 <li><a href="{% url 'administration:admin_announcements' %}" class="active"><i>📢</i> Announcements</a></li>
             </ul>
+            <div class="sidebar-footer">
+                <a href="{% url 'accounts:personal_info' %}" class="btn btn-primary"> User View</a>
+                <form method="get" action="{% url 'accounts:logout_confirm' %}" class="logout-form">
+                    <button type="submit" class="btn-logout">🚪 LOGOUT</button>
+                </form>
+            </div>
         </aside>
 
         <!-- Main Content -->
@@ -388,7 +35,7 @@
             <div class="page-header">
                 <div>
                     <h1>Announcement Management</h1>
-                    <p style="color: #7f8c8d;">Create and manage barangay announcements for residents</p>
+                    <p>Create and manage barangay announcements for residents</p>
                 </div>
                 <button onclick="openCreateModal()" class="btn-create">+ Create Announcement</button>
             </div>
@@ -431,7 +78,7 @@
                         <span class="announcement-type type-{{ announcement.announcement_type }}">
                             {{ announcement.get_announcement_type_display }}
                         </span>
-                        <span style="font-size: 0.85rem; color: {% if announcement.is_active %}#28a745{% else %}#dc3545{% endif %}; font-weight: 600;">
+                        <span class="{% if announcement.is_active %}status-active{% else %}status-inactive{% endif %}">
                             {% if announcement.is_active %}● Active{% else %}○ Inactive{% endif %}
                         </span>
                     </div>
@@ -552,14 +199,14 @@
             </div>
             <div class="modal-body">
                 <p>Are you sure you want to delete the announcement:</p>
-                <p style="font-weight: 600; margin-top: 10px;" id="deleteTitle"></p>
-                <p style="color: #dc3545; margin-top: 15px;">⚠️ This action cannot be undone!</p>
+                <p style="font-weight: 600; margin-top: 10px; color: #10b981;" id="deleteTitle"></p>
+                <p style="color: #ef4444; margin-top: 15px;">⚠️ This action cannot be undone!</p>
             </div>
             <form method="POST" id="deleteForm">
                 {% csrf_token %}
                 <div class="modal-footer">
                     <button type="button" onclick="closeDeleteModal()" class="modal-btn modal-btn-cancel">Cancel</button>
-                    <button type="submit" class="modal-btn" style="background: #dc3545; color: white;">Delete</button>
+                    <button type="submit" class="modal-btn" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white;">Delete</button>
                 </div>
             </form>
         </div>
@@ -578,7 +225,6 @@
             const modal = document.getElementById('editModal');
             const form = document.getElementById('editForm');
             
-            // Updated to use Django URL pattern with announcement_id parameter
             form.action = `/administration/announcements/${id}/edit/`;
             document.getElementById('edit_title').value = title;
             document.getElementById('edit_content').value = content;
@@ -596,7 +242,6 @@
             const modal = document.getElementById('deleteModal');
             const form = document.getElementById('deleteForm');
             
-            // Updated to use Django URL pattern with announcement_id parameter
             form.action = `/administration/announcements/${id}/delete/`;
             document.getElementById('deleteTitle').textContent = title;
             

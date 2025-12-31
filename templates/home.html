@@ -12,9 +12,7 @@ Barangay Labangon Digital Services{% endblock %} {% block head %}
     {% if user.is_authenticated %}
       <!-- Show Dashboard button for authenticated users -->
       <a href="{% url 'accounts:personal_info' %}" class="btn btn-primary">Go to Dashboard</a>
-      <!-- CHANGED: accounts:document_request → certificates:document_request -->
       <a href="{% url 'certificates:document_request' %}" class="btn btn-secondary">Request Certificate</a>
-      <!-- CHANGED: accounts:file_report → reports:file_report -->
       <a href="{% url 'reports:file_report' %}" class="btn btn-secondary">File Report</a>
       
     {% else %}

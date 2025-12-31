@@ -1,6 +1,3 @@
-/* announcement.css - Updated for fixed sidebar/topbar */
-
-/* Remove conflicting overflow rules */
 html, body {
   overflow: hidden !important;
   height: 100% !important;
@@ -32,7 +29,6 @@ html, body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
- 
 }
 
 /* Topbar stays fixed at top */
@@ -50,7 +46,22 @@ html, body {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
- 
+  padding: 0 !important;
+}
+
+/* Smooth scrollbar for content */
+.content-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+.content-wrapper::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+.content-wrapper::-webkit-scrollbar-thumb {
+  background: var(--panel-hover);
+  border-radius: 4px;
+}
+.content-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--brand);
 }
 
 /* Smooth scrollbar for content */
@@ -73,7 +84,7 @@ html, body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px;
-  padding-bottom: 120px; /* CHANGE from 60px to 120px */
+  padding-bottom: 60px;
   width: 100%;
 }
 

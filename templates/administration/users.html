@@ -5,396 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Management - Admin</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
-            min-height: 100vh;
-        }
-
-        .admin-container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 260px;
-            background: #2c3e50;
-            color: white;
-            padding: 20px 0;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-        }
-
-        .sidebar-header {
-            padding: 0 20px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 20px;
-        }
-
-        .sidebar-header h2 {
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-        }
-
-        .sidebar-header p {
-            font-size: 0.9rem;
-            color: #bdc3c7;
-        }
-
-        .sidebar-menu {
-            list-style: none;
-        }
-
-        .sidebar-menu li {
-            margin-bottom: 5px;
-        }
-
-        .sidebar-menu a {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            color: #ecf0f1;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-
-        .sidebar-menu a:hover {
-            background: rgba(255,255,255,0.1);
-            padding-left: 25px;
-        }
-
-        .sidebar-menu a.active {
-            background: #3498db;
-            border-left: 4px solid #2980b9;
-        }
-
-        .sidebar-menu a i {
-            margin-right: 10px;
-            width: 20px;
-        }
-
-        /* Main Content */
-        .main-content {
-            margin-left: 260px;
-            flex: 1;
-            padding: 30px;
-            width: calc(100% - 260px);
-        }
-
-        .page-header {
-            margin-bottom: 30px;
-        }
-
-        .page-header h1 {
-            font-size: 2rem;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-
-        .page-header p {
-            color: #7f8c8d;
-        }
-
-        /* Filters */
-        .filters-section {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-
-        .filters-form {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            align-items: end;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group label {
-            font-size: 0.9rem;
-            color: #2c3e50;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-
-        .form-group input,
-        .form-group select {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 0.95rem;
-        }
-
-        .filter-btn {
-            padding: 10px 20px;
-            background: #3498db;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.95rem;
-            transition: background 0.3s;
-        }
-
-        .filter-btn:hover {
-            background: #2980b9;
-        }
-
-        /* Table */
-        .table-container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        thead {
-            background: #34495e;
-            color: white;
-        }
-
-        th, td {
-            padding: 15px;
-            text-align: left;
-        }
-
-        tbody tr {
-            border-bottom: 1px solid #ecf0f1;
-            transition: background 0.3s;
-        }
-
-        tbody tr:hover {
-            background: #f8f9fa;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .status-verified { background: #d4edda; color: #155724; }
-        .status-pending { background: #fff3cd; color: #856404; }
-        .status-active { background: #d1ecf1; color: #0c5460; }
-        .status-inactive { background: #f8d7da; color: #721c24; }
-
-        .action-btn {
-            padding: 6px 12px;
-            margin: 0 3px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.3s;
-        }
-
-        .btn-verify {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-verify:hover {
-            background: #218838;
-        }
-
-        .btn-deactivate {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn-deactivate:hover {
-            background: #c82333;
-        }
-
-        .btn-activate {
-            background: #17a2b8;
-            color: white;
-        }
-
-        .btn-activate:hover {
-            background: #138496;
-        }
-
-        .btn-view {
-            background: #6c757d;
-            color: white;
-        }
-
-        .btn-view:hover {
-            background: #5a6268;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #7f8c8d;
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-        }
-
-        .modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            margin-bottom: 20px;
-        }
-
-        .modal-header h2 {
-            color: #2c3e50;
-        }
-
-        .modal-body {
-            margin-bottom: 20px;
-        }
-
-        .detail-row {
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #ecf0f1;
-        }
-
-        .detail-row:last-child {
-            border-bottom: none;
-        }
-
-        .detail-label {
-            font-weight: 600;
-            color: #7f8c8d;
-            margin-bottom: 5px;
-        }
-
-        .detail-value {
-            color: #2c3e50;
-        }
-
-        .modal-footer {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-        }
-
-        .modal-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.95rem;
-        }
-
-        .modal-btn-primary {
-            background: #28a745;
-            color: white;
-        }
-
-        .modal-btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-
-        .modal-btn-info {
-            background: #17a2b8;
-            color: white;
-        }
-
-        .modal-btn-cancel {
-            background: #95a5a6;
-            color: white;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 200px;
-            }
-
-            .main-content {
-                margin-left: 200px;
-                width: calc(100% - 200px);
-            }
-        }
-
-        @media (max-width: 576px) {
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-            }
-
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-            }
-
-            .filters-form {
-                grid-template-columns: 1fr;
-            }
-        }
-        .user-type-resident {
-            background-color: #ffe680 !important; /* Yellow */
-            color: #000;
-        }
-
-        .user-type-admin {
-            background-color: #b6ff7a !important; /* Yellow-green */
-            color: #000;
-        }
-        
-    </style>
+    <link rel="stylesheet" href="{% static 'css/administration/admin_users.css' %}">
 </head>
 <body>
     <div class="admin-container">
@@ -411,6 +22,12 @@
                 <li><a href="{% url 'administration:admin_reports' %}"><i>📋</i> Reports</a></li>
                 <li><a href="{% url 'administration:admin_announcements' %}"><i>📢</i> Announcements</a></li>
             </ul>
+            <div class="sidebar-footer">
+                <a href="{% url 'accounts:personal_info' %}" class="btn btn-primary"> User View</a>
+                <form method="get" action="{% url 'accounts:logout_confirm' %}" class="logout-form">
+                    <button type="submit" class="btn-logout">🚪 LOGOUT</button>
+                </form>
+            </div>
         </aside>
 
         <!-- Main Content -->
@@ -468,10 +85,7 @@
                                 <td>
                                     <select 
                                         onchange="changeUserType({{ usr.id }}, this.value)" 
-                                        class="user-type-select 
-                                            {% if usr.is_superuser %}user-type-admin{% else %}user-type-resident{% endif %}"
-                                        style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; cursor: pointer;">
-                                        
+                                        class="user-type-select {% if usr.is_superuser %}user-type-admin{% else %}user-type-resident{% endif %}">
                                         <option value="resident" {% if not usr.is_superuser %}selected{% endif %}>Resident</option>
                                         <option value="admin" {% if usr.is_superuser %}selected{% endif %}>Admin</option>
                                     </select>
@@ -519,9 +133,7 @@
             <div class="modal-header">
                 <h2>User Details</h2>
             </div>
-            <div class="modal-body" id="userDetails">
-                <!-- Will be filled by JavaScript -->
-            </div>
+            <div class="modal-body" id="userDetails"></div>
             <div class="modal-footer">
                 <button type="button" onclick="closeViewUserModal()" class="modal-btn modal-btn-cancel">Close</button>
             </div>
@@ -536,7 +148,7 @@
             </div>
             <div class="modal-body">
                 <p>Are you sure you want to verify the account for <strong id="verifyUsername"></strong>?</p>
-                <p style="margin-top: 10px; color: #7f8c8d; font-size: 0.9rem;">This will allow the user to access all system features.</p>
+                <p style="margin-top: 10px; color: #94a3b8; font-size: 0.9rem;">This will allow the user to access all system features.</p>
             </div>
             <form method="POST" id="verifyForm">
                 {% csrf_token %}
@@ -556,11 +168,11 @@
             </div>
             <div class="modal-body">
                 <p>Are you sure you want to deactivate the account for <strong id="deactivateUsername"></strong>?</p>
-                <p id="deactivateSelfWarning" style="margin-top: 10px; color: #721c24; font-size: 0.9rem; display: none;">
+                <p id="deactivateSelfWarning" style="display: none;">
                     ⚠️ <strong>WARNING: You are about to deactivate your own account!</strong><br>
                     You will be immediately logged out and will not be able to log back in until another administrator reactivates your account.
                 </p>
-                <p id="deactivateRegularWarning" style="margin-top: 10px; color: #721c24; font-size: 0.9rem;">
+                <p id="deactivateRegularWarning">
                     ⚠️ This will prevent the user from logging in.
                 </p>
             </div>
@@ -582,7 +194,7 @@
             </div>
             <div class="modal-body">
                 <p>Are you sure you want to activate the account for <strong id="activateUsername"></strong>?</p>
-                <p style="margin-top: 10px; color: #0c5460; font-size: 0.9rem;">This will allow the user to log in again.</p>
+                <p style="margin-top: 10px; color: #3b82f6; font-size: 0.9rem;">This will allow the user to log in again.</p>
             </div>
             <form method="POST" id="activateForm">
                 {% csrf_token %}
@@ -605,16 +217,16 @@
                     Are you sure you want to change user <strong id="changeTypeUsername"></strong> to <strong id="changeTypeNewType"></strong>?
                 </p>
                 
-                <div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #17a2b8;">
-                    <p id="changeTypeAdminInfo" style="margin: 0; color: #0c5460; font-size: 0.95rem; display: none;">
+                <div style="margin-top: 15px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border-left: 4px solid #3b82f6;">
+                    <p id="changeTypeAdminInfo" style="margin: 0; color: #3b82f6; font-size: 0.95rem; display: none;">
                         <strong>ℹ️ Admin Access:</strong> This user will have access to the admin dashboard and management features.
                     </p>
-                    <p id="changeTypeResidentInfo" style="margin: 0; color: #856404; font-size: 0.95rem; display: none;">
+                    <p id="changeTypeResidentInfo" style="margin: 0; color: #fb923c; font-size: 0.95rem; display: none;">
                         <strong>ℹ️ Resident Access:</strong> This user will only have access to resident features (no admin dashboard access).
                     </p>
                 </div>
 
-                <div style="margin-top: 25px; text-align: center; font-weight: 600; color: #2c3e50;">
+                <div style="margin-top: 25px; text-align: center; font-weight: 600; color: #e5e7eb;">
                     Do you want to proceed?
                 </div>
             </div>
@@ -635,7 +247,6 @@
     </div>
 
     <script>
-        // Store current user ID for self-check
         const currentUserId = {{ user.id }};
 
         function viewUserDetails(username, fullName, email, contact, verified, active, isAdmin, joinedDate) {
@@ -674,7 +285,7 @@
                 <div class="detail-row">
                     <div class="detail-label">User Type</div>
                     <div class="detail-value">
-                        <span class="status-badge ${isSuperuser ? 'user-type-admin' : 'user-type-resident'}" style="background: ${isSuperuser ? '#b6ff7a' : '#ffe680'}; color: #000;">
+                        <span class="status-badge ${isSuperuser ? 'user-type-admin' : 'user-type-resident'}">
                             ${isSuperuser ? 'Admin' : 'Resident'}
                         </span>
                     </div>
@@ -705,7 +316,6 @@
             const form = document.getElementById('verifyForm');
             const usernameEl = document.getElementById('verifyUsername');
             
-            // FIXED: Correct URL pattern
             form.action = `/administration/users/${userId}/verify/`;
             usernameEl.textContent = username;
             modal.classList.add('active');
@@ -723,16 +333,13 @@
             const regularWarning = document.getElementById('deactivateRegularWarning');
             const deactivateBtn = document.getElementById('deactivateButton');
             
-            // FIXED: Correct URL pattern
             form.action = `/administration/users/${userId}/deactivate/`;
             usernameEl.textContent = username;
             
-            // Check if deactivating own account
             if (userId === currentUserId) {
                 selfWarning.style.display = 'block';
                 regularWarning.style.display = 'none';
                 deactivateBtn.textContent = 'Yes, Deactivate My Account';
-                deactivateBtn.style.background = '#dc3545';
                 
                 deactivateBtn.onclick = function(e) {
                     if (!confirm('⚠️ FINAL WARNING: Are you absolutely sure you want to deactivate your own account? You will be logged out immediately!')) {
@@ -745,8 +352,7 @@
                 selfWarning.style.display = 'none';
                 regularWarning.style.display = 'block';
                 deactivateBtn.textContent = 'Deactivate Account';
-                deactivateBtn.style.background = '#dc3545';
-                deactivateBtn.onclick = null; // Remove extra confirmation for other users
+                deactivateBtn.onclick = null;
             }
             
             modal.classList.add('active');
@@ -754,7 +360,6 @@
 
         function closeDeactivateModal() {
             document.getElementById('deactivateModal').classList.remove('active');
-            // Reset button
             const deactivateBtn = document.getElementById('deactivateButton');
             deactivateBtn.textContent = 'Deactivate Account';
             deactivateBtn.onclick = null;
@@ -765,7 +370,6 @@
             const form = document.getElementById('activateForm');
             const usernameEl = document.getElementById('activateUsername');
             
-            // FIXED: Correct URL pattern
             form.action = `/administration/users/${userId}/activate/`;
             usernameEl.textContent = username;
             modal.classList.add('active');
@@ -775,7 +379,6 @@
             document.getElementById('activateModal').classList.remove('active');
         }
 
-        // Change User Type functionality
         function changeUserType(userId, newType) {
             const modal = document.getElementById('changeUserTypeModal');
             const form = document.getElementById('changeUserTypeForm');
@@ -786,21 +389,16 @@
             const adminInfo = document.getElementById('changeTypeAdminInfo');
             const residentInfo = document.getElementById('changeTypeResidentInfo');
             
-            // Get username from the table row
             const row = event.target.closest('tr');
             const username = row.querySelector('td strong').textContent;
             
-            // ✅ UPDATED: Use correct Django URL pattern from administration app
             form.action = '{% url "administration:admin_change_user_type" %}';
-            
-            // ✅ ADD THIS: Set user_id in hidden input
             userIdInput.value = userId;
             
             usernameEl.textContent = username;
             newTypeEl.textContent = newType === 'admin' ? 'Admin' : 'Resident';
             valueInput.value = newType;
             
-            // Show appropriate info message
             if (newType === 'admin') {
                 adminInfo.style.display = 'block';
                 residentInfo.style.display = 'none';
@@ -816,7 +414,6 @@
             document.getElementById('changeUserTypeModal').classList.remove('active');
         }
 
-        // Close modal when clicking outside
         window.onclick = function(event) {
             const viewUserModal = document.getElementById('viewUserModal');
             const verifyModal = document.getElementById('verifyModal');
@@ -824,21 +421,11 @@
             const activateModal = document.getElementById('activateModal');
             const changeUserTypeModal = document.getElementById('changeUserTypeModal');
             
-            if (event.target == viewUserModal) {
-                closeViewUserModal();
-            }
-            if (event.target == verifyModal) {
-                closeVerifyModal();
-            }
-            if (event.target == deactivateModal) {
-                closeDeactivateModal();
-            }
-            if (event.target == activateModal) {
-                closeActivateModal();
-            }
-            if (event.target == changeUserTypeModal) {
-                closeChangeUserTypeModal();
-            }
+            if (event.target == viewUserModal) closeViewUserModal();
+            if (event.target == verifyModal) closeVerifyModal();
+            if (event.target == deactivateModal) closeDeactivateModal();
+            if (event.target == activateModal) closeActivateModal();
+            if (event.target == changeUserTypeModal) closeChangeUserTypeModal();
         }
     </script>
 </body>

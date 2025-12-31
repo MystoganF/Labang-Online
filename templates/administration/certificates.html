@@ -5,354 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Certificate Management - Admin</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
-            min-height: 100vh;
-        }
-
-        .admin-container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 260px;
-            background: #2c3e50;
-            color: white;
-            padding: 20px 0;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-        }
-
-        .sidebar-header {
-            padding: 0 20px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 20px;
-        }
-
-        .sidebar-header h2 {
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-        }
-
-        .sidebar-header p {
-            font-size: 0.9rem;
-            color: #bdc3c7;
-        }
-
-        .sidebar-menu {
-            list-style: none;
-        }
-
-        .sidebar-menu li {
-            margin-bottom: 5px;
-        }
-
-        .sidebar-menu a {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            color: #ecf0f1;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-
-        .sidebar-menu a:hover {
-            background: rgba(255,255,255,0.1);
-            padding-left: 25px;
-        }
-
-        .sidebar-menu a.active {
-            background: #3498db;
-            border-left: 4px solid #2980b9;
-        }
-
-        .sidebar-menu a i {
-            margin-right: 10px;
-            width: 20px;
-        }
-
-        /* Main Content */
-        .main-content {
-            margin-left: 260px;
-            flex: 1;
-            padding: 30px;
-            width: calc(100% - 260px);
-        }
-
-        .page-header {
-            margin-bottom: 30px;
-        }
-
-        .page-header h1 {
-            font-size: 2rem;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-
-        .page-header p {
-            color: #7f8c8d;
-        }
-
-        /* Filters */
-        .filters-section {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-
-        .filters-form {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            align-items: end;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group label {
-            font-size: 0.9rem;
-            color: #2c3e50;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-
-        .form-group input,
-        .form-group select {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 0.95rem;
-        }
-
-        .filter-btn {
-            padding: 10px 20px;
-            background: #3498db;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.95rem;
-            transition: background 0.3s;
-        }
-
-        .filter-btn:hover {
-            background: #2980b9;
-        }
-
-        /* Table */
-        .table-container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        /* Modal details styling */
-        .detail-row { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #ecf0f1; }
-        .detail-label { font-weight: 600; color: #7f8c8d; margin-bottom: 6px; }
-        .detail-value { color: #2c3e50; }
-
-        thead {
-            background: #34495e;
-            color: white;
-        }
-
-        th, td {
-            padding: 15px;
-            text-align: left;
-        }
-
-        tbody tr {
-            border-bottom: 1px solid #ecf0f1;
-            transition: background 0.3s;
-        }
-
-        tbody tr:hover {
-            background: #f8f9fa;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .status-unpaid { background: #f8d7da; color: #721c24; }
-        .status-pending { background: #fff3cd; color: #856404; }
-        .status-paid { background: #d4edda; color: #155724; }
-        .status-failed { background: #f8d7da; color: #721c24; }
-
-        .claim-processing { background: #cce5ff; color: #004085; }
-        .claim-ready { background: #d1ecf1; color: #0c5460; }
-        .claim-claimed { background: #d4edda; color: #155724; }
-
-        .action-btn {
-            padding: 6px 12px;
-            margin: 0 3px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.3s;
-        }
-
-        .btn-verify {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-verify:hover {
-            background: #218838;
-        }
-
-        .btn-reject {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn-reject:hover {
-            background: #c82333;
-        }
-
-        .btn-update {
-            background: #17a2b8;
-            color: white;
-        }
-
-        .btn-update:hover {
-            background: #138496;
-        }
-
-        .btn-view {
-            background: #6c757d;
-            color: white;
-        }
-
-        .btn-view:hover {
-            background: #5a6268;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #7f8c8d;
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-        }
-
-        .modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            max-width: 500px;
-            width: 90%;
-        }
-
-        .modal-header {
-            margin-bottom: 20px;
-        }
-
-        .modal-header h2 { color: #2c3e50; }
-
-        .modal-body {
-            margin-bottom: 20px;
-        }
-
-        .modal-footer {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-        }
-
-        .modal-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.95rem;
-        }
-
-        .modal-btn-primary { background: #3498db; color: white; }
-        .modal-btn-cancel { background: #95a5a6; color: white; }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 200px;
-            }
-
-            .main-content {
-                margin-left: 200px;
-                width: calc(100% - 200px);
-            }
-        }
-
-        @media (max-width: 576px) {
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-            }
-
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-            }
-
-            .filters-form {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/administration/admin_certificates.css' %}">
 </head>
 <body>
     <div class="admin-container">
@@ -369,6 +22,12 @@
                 <li><a href="{% url 'administration:admin_reports' %}"><i>📋</i> Reports</a></li>
                 <li><a href="{% url 'administration:admin_announcements' %}"><i>📢</i> Announcements</a></li>
             </ul>
+            <div class="sidebar-footer">
+                <a href="{% url 'accounts:personal_info' %}" class="btn btn-primary"> User View</a>
+                <form method="get" action="{% url 'accounts:logout_confirm' %}" class="logout-form">
+                    <button type="submit" class="btn-logout">🚪 LOGOUT</button>
+                </form>
+            </div>
         </aside>
 
         <!-- Main Content -->
@@ -433,7 +92,6 @@
                                 <th>Payment Reference</th>
                                 <th>Payment Mode</th>
                                 <th>Claim Status</th>
-                                <th>Date</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -446,26 +104,25 @@
                                 <td><span class="status-badge status-{{ cert.payment_status }}">{{ cert.get_payment_status_display }}</span></td>
                                 <td>
                                     {% if cert.payment_reference %}
-                                        <span style="font-family: monospace; background: #e9ecef; padding: 2px 8px; border-radius: 4px; font-size: 0.9rem;">
+                                        <span style="font-family: monospace; background: rgba(16, 185, 129, 0.1); padding: 4px 8px; border-radius: 4px; font-size: 0.9rem; color: #10b981;">
                                             {{ cert.payment_reference }}
                                         </span>
                                     {% else %}
-                                        <span style="font-family: monospace; background: #e9ecef; padding: 2px 8px; border-radius: 4px; font-size: 0.9rem;">
+                                        <span style="font-family: monospace; background: rgba(148, 163, 184, 0.1); padding: 4px 8px; border-radius: 4px; font-size: 0.9rem; color: #94a3b8;">
                                             {{ cert.request_id }}
                                         </span>
                                     {% endif %}
                                 </td>
                                 <td>
                                     {% if cert.payment_mode == 'gcash' %}
-                                        <span style="color: #0088cc; font-weight: 500;">💳 GCash</span>
+                                        <span style="color: #3b82f6; font-weight: 500;">💳 GCash</span>
                                     {% elif cert.payment_mode == 'counter' %}
-                                        <span style="color: #28a745; font-weight: 500;">🏪 Counter</span>
+                                        <span style="color: #10b981; font-weight: 500;">🏪 Counter</span>
                                     {% else %}
-                                        <span style="color: #95a5a6; font-style: italic;">Not Selected</span>
+                                        <span style="color: #94a3b8; font-style: italic;">Not Selected</span>
                                     {% endif %}
                                 </td>
                                 <td><span class="status-badge claim-{{ cert.claim_status }}">{{ cert.get_claim_status_display }}</span></td>
-                                <td>{{ cert.created_at|date:"M d, Y" }}</td>
                                 <td>
                                     {% if cert.payment_status == 'pending' %}
                                     <button type="button" onclick="confirmVerifyPayment('{{ cert.request_id }}', '{{ cert.payment_reference }}', '{{ cert.get_payment_mode_display }}')" class="action-btn btn-verify">✓ Verify</button>
@@ -494,7 +151,6 @@
         </main>
     </div>
 
-
     <!-- Payment Verification Modal -->
     <div id="verifyPaymentModal" class="modal">
         <div class="modal-content">
@@ -505,16 +161,16 @@
                 <p><strong>Request ID:</strong> <span id="verifyRequestId"></span></p>
                 <p><strong>Payment Mode:</strong> <span id="verifyPaymentMode"></span></p>
                 <p style="margin-top: 15px;"><strong>Payment Reference:</strong></p>
-                <div style="background: #e9ecef; padding: 12px; border-radius: 8px; margin-top: 8px; font-family: monospace; font-size: 1.1rem; text-align: center; border: 2px solid #3498db;">
+                <div class="payment-ref-display">
                     <span id="verifyPaymentRef"></span>
                 </div>
-                <p style="margin-top: 15px; color: #7f8c8d; font-size: 0.9rem;">
+                <p style="margin-top: 15px; color: #94a3b8; font-size: 0.9rem;">
                     ℹ️ Please verify this payment reference in your payment system before confirming.
                 </p>
             </div>
             <div class="modal-footer">
                 <button type="button" onclick="closeVerifyPaymentModal()" class="modal-btn modal-btn-cancel">Cancel</button>
-                <button type="button" onclick="submitVerifyPayment()" class="modal-btn" style="background: #28a745; color: white;">✓ Confirm Verification</button>
+                <button type="button" onclick="submitVerifyPayment()" class="modal-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white;">✓ Confirm Verification</button>
             </div>
         </div>
     </div>
@@ -528,16 +184,16 @@
             <div class="modal-body">
                 <p><strong>Request ID:</strong> <span id="rejectRequestId"></span></p>
                 <p style="margin-top: 15px;"><strong>Payment Reference:</strong></p>
-                <div style="background: #f8d7da; padding: 12px; border-radius: 8px; margin-top: 8px; font-family: monospace; font-size: 1.1rem; text-align: center; border: 2px solid #dc3545;">
+                <div class="payment-ref-display payment-ref-reject">
                     <span id="rejectPaymentRef"></span>
                 </div>
-                <p style="margin-top: 15px; color: #721c24; font-size: 0.9rem;">
+                <p style="margin-top: 15px; color: #ef4444; font-size: 0.9rem;">
                     ⚠️ Are you sure you want to reject this payment? The user will need to resubmit their payment.
                 </p>
             </div>
             <div class="modal-footer">
                 <button type="button" onclick="closeRejectPaymentModal()" class="modal-btn modal-btn-cancel">Cancel</button>
-                <button type="button" onclick="submitRejectPayment()" class="modal-btn" style="background: #dc3545; color: white;">✗ Confirm Rejection</button>
+                <button type="button" onclick="submitRejectPayment()" class="modal-btn" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white;">✗ Confirm Rejection</button>
             </div>
         </div>
     </div>
@@ -550,11 +206,11 @@
             </div>
             <div class="modal-body">
                 <p><strong>Request ID:</strong> <span id="deleteRequestId"></span></p>
-                <p style="margin-top: 12px; color: var(--text-secondary);">This action cannot be undone.</p>
+                <p style="margin-top: 12px; color: #94a3b8;">This action cannot be undone.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" onclick="closeDeleteCertificateModal()" class="modal-btn modal-btn-cancel">Cancel</button>
-                <button type="button" onclick="submitDeleteCertificate()" class="modal-btn" style="background:#ef4444; color:#fff; border-radius:10px;">Delete</button>
+                <button type="button" onclick="submitDeleteCertificate()" class="modal-btn" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white;">Delete</button>
             </div>
         </div>
     </div>
@@ -571,7 +227,6 @@
             </div>
         </div>
     </div>
-
 
     <!-- Claim Status Update Modal -->
     <div id="claimModal" class="modal">
@@ -600,20 +255,16 @@
     </div>
 
     <script>
-        // Store the current request ID and action for verification/rejection
         let currentRequestId = null;
         let currentAction = null;
 
         function confirmVerifyPayment(requestId, paymentRef, paymentMode) {
             const modal = document.getElementById('verifyPaymentModal');
-            
             currentRequestId = requestId;
             currentAction = 'verify';
-            
             document.getElementById('verifyRequestId').textContent = requestId;
             document.getElementById('verifyPaymentRef').textContent = paymentRef || 'N/A';
             document.getElementById('verifyPaymentMode').textContent = paymentMode || 'N/A';
-            
             modal.classList.add('active');
         }
 
@@ -635,7 +286,6 @@
             if (currentRequestId) {
                 const form = document.createElement('form');
                 form.method = 'POST';
-                // FIXED: Correct URL pattern
                 form.action = `/administration/certificates/${currentRequestId}/delete/`;
                 const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
                 if (csrfToken) { 
@@ -658,12 +308,9 @@
 
         function submitVerifyPayment() {
             if (currentRequestId) {
-                // Create and submit the form programmatically
                 const form = document.createElement('form');
                 form.method = 'POST';
-                // FIXED: Correct URL pattern
                 form.action = `/administration/certificates/${currentRequestId}/verify-payment/`;
-                
                 const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
                 if (csrfToken) {
                     const csrfInput = document.createElement('input');
@@ -672,7 +319,6 @@
                     csrfInput.value = csrfToken.value;
                     form.appendChild(csrfInput);
                 }
-                
                 document.body.appendChild(form);
                 form.submit();
             }
@@ -680,13 +326,10 @@
 
         function confirmRejectPayment(requestId, paymentRef) {
             const modal = document.getElementById('rejectPaymentModal');
-            
             currentRequestId = requestId;
             currentAction = 'reject';
-            
             document.getElementById('rejectRequestId').textContent = requestId;
             document.getElementById('rejectPaymentRef').textContent = paymentRef || 'N/A';
-            
             modal.classList.add('active');
         }
 
@@ -698,12 +341,9 @@
 
         function submitRejectPayment() {
             if (currentRequestId) {
-                // Create and submit the form programmatically
                 const form = document.createElement('form');
                 form.method = 'POST';
-                // FIXED: Correct URL pattern
                 form.action = `/administration/certificates/${currentRequestId}/reject-payment/`;
-                
                 const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
                 if (csrfToken) {
                     const csrfInput = document.createElement('input');
@@ -712,7 +352,6 @@
                     csrfInput.value = csrfToken.value;
                     form.appendChild(csrfInput);
                 }
-                
                 document.body.appendChild(form);
                 form.submit();
             }
@@ -721,7 +360,7 @@
         function viewCertificate(id, name, type, payStatus, claimStatus, amount, mode, reference, purpose, photoUrl, createdAt) {
             const modal = document.getElementById('viewCertModal');
             const details = document.getElementById('certDetails');
-            const photoBlock = photoUrl ? `<div class="detail-row"><div class="detail-label">Proof Photo</div><div class="detail-value"><img src="${photoUrl}" alt="Proof Photo" style="max-width:100%; border-radius:8px; border:1px solid #ecf0f1;"/></div></div>` : '';
+            const photoBlock = photoUrl ? `<div class="detail-row"><div class="detail-label">Proof Photo</div><div class="detail-value"><img src="${photoUrl}" alt="Proof Photo" style="max-width:100%; border-radius:8px; border:1px solid rgba(148, 163, 184, 0.2);"/></div></div>` : '';
 
             details.innerHTML = `
                 <div class="detail-row"><div class="detail-label">Request ID</div><div class="detail-value">${id}</div></div>
@@ -747,19 +386,15 @@
             const modal = document.getElementById('claimModal');
             const form = document.getElementById('claimForm');
             const select = document.getElementById('claim_status_select');
-            
-            // FIXED: Correct URL pattern
             form.action = `/administration/certificates/${requestId}/update-claim/`;
             select.value = currentStatus;
             modal.classList.add('active');
         }
 
         function closeClaimModal() {
-            const modal = document.getElementById('claimModal');
-            modal.classList.remove('active');
+            document.getElementById('claimModal').classList.remove('active');
         }
 
-        // Close modal when clicking outside
         window.onclick = function(event) {
             const claimModal = document.getElementById('claimModal');
             const verifyModal = document.getElementById('verifyPaymentModal');
@@ -767,21 +402,11 @@
             const deleteModal = document.getElementById('deleteCertModal');
             const viewCertModal = document.getElementById('viewCertModal');
             
-            if (event.target == claimModal) {
-                closeClaimModal();
-            }
-            if (event.target == verifyModal) {
-                closeVerifyPaymentModal();
-            }
-            if (event.target == rejectModal) {
-                closeRejectPaymentModal();
-            }
-            if (event.target == deleteModal) {
-                closeDeleteCertificateModal();
-            }
-            if (event.target == viewCertModal) {
-                closeViewCertificate();
-            }
+            if (event.target == claimModal) closeClaimModal();
+            if (event.target == verifyModal) closeVerifyPaymentModal();
+            if (event.target == rejectModal) closeRejectPaymentModal();
+            if (event.target == deleteModal) closeDeleteCertificateModal();
+            if (event.target == viewCertModal) closeViewCertificate();
         }
     </script>
 </body>
