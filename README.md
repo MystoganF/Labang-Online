@@ -112,10 +112,17 @@ Troubleshooting
 
 Deploy Render
 
-- https://csit327-g7-labang-online.onrender.com/
+- https://labang-online.onrender.com/
 
 
 ## Team members
+
+Project Managers:
+Product Owner: Andre Salonga
+Scrum Master: Kean Maverick Saligue
+Business Analyst: Andrey Reyes
+
+Developers:
 - Lenon Lee O. Natividad 
 - Lead Developer
 - lenonlee.natividad@cit.edu
@@ -124,7 +131,7 @@ Deploy Render
 - Frontend Developer
 - brynekendrick.nunez@cit.edu
 
-- Moniquo Nicole C. Mosende
-- Backend Developer
-- moniquonicole.mosende@cit.edu
+- Kean Maverick W. Saligue
+- Full-Stack Developer
+- keanmaverick.saligue@cit.edu
 
